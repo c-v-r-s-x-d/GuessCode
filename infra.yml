@@ -1,10 +1,10 @@
 version: '3'
 
 services:
-  guess_db:
+  guess-db:
     restart: always
     image: postgres:11.4
-    container_name: guess_db
+    container_name: guess-db
     volumes:
       - /tmp/data/core_db:/var/lib/postgresql/data
     ports:
@@ -12,9 +12,9 @@ services:
     networks:
       - guess-network
   
-  guess_redis:
+  guess-redis:
     image: redis:latest
-    container_name: guess_redis
+    container_name: guess-redis
     ports:
       - "6379:6379"
     volumes:
@@ -23,8 +23,8 @@ services:
     #  - REDIS_PASSWORD=${REDIS_PASSWORD}
     #command: ["redis-server", "--requirepass", "$REDIS_PASSWORD"]
     
-  guess_otel_collector:
-    container_name: guess_otel_collector
+  guess-otel-collector:
+    container_name: guess-otel-collector
     image: otel/opentelemetry-collector:latest
     volumes:
       - ./configs/otel-collector-config.yaml:/etc/otel-collector-config.yaml
@@ -32,9 +32,9 @@ services:
       - "4317:4317" # OTLP
       - "9464:9464" # Prometheus
   
-  guess_sentry:
+  guess-sentry:
     image: sentry:latest
-    container_name: guess_sentry
+    container_name: guess-sentry
     environment:
       - SENTRY_SECRET_KEY=xV9uDuAp5L
       - SENTRY_DB_USER=sentry
@@ -46,15 +46,15 @@ services:
     ports:
       - "9000:9000"
     depends_on:
-      - guess_sentry_db
+      - guess-sentry-db
     volumes:
       - sentry-data:/var/lib/sentry/files
       - ./scripts/initialize_sentry.sh:/etc/sentry/initialize_sentry.sh
     entrypoint: /bin/sh -c "/etc/sentry/initialize_sentry.sh"
     
-  guess_sentry_db:
+  guess-sentry-db:
     image: postgres:11.4
-    container_name: guess_sentry_db
+    container_name: guess-sentry-db
     environment:
       POSTGRES_USER: sentry
       POSTGRES_PASSWORD: sentry
@@ -62,8 +62,8 @@ services:
     volumes:
       - sentry-postgres-data:/var/lib/postgresql/data
         
-  guess_loki:
-    container_name: guess_loki
+  guess-loki:
+    container_name: guess-loki
     image: grafana/loki:2.8.2
     ports:
       - "3100:3100"

@@ -22,7 +22,7 @@ public static class OpenTelemetryConfiguration
         builder.Logging.AddOpenTelemetry(options =>
         {
             options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("GuessCode"));
-            options.AddOtlpExporter(o => o.Endpoint = new Uri(""));
+            options.AddOtlpExporter(o => o.Endpoint = new Uri(otelUri));
         });
 
         builder.Services.AddOpenTelemetry()
