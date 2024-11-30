@@ -22,6 +22,8 @@ services:
     environment:
       - REDIS_PASSWORD=123
     command: ["redis-server", "--requirepass", "123"]
+    networks:
+      - guess-network
     
   guess-otel-collector:
     container_name: guess-otel-collector
@@ -31,6 +33,8 @@ services:
     ports:
       - "4317:4317" # OTLP
       - "9464:9464" # Prometheus
+    networks:
+      - guess-network
   
   guess-sentry:
     image: sentry:latest
@@ -51,16 +55,22 @@ services:
       - sentry-data:/var/lib/sentry/files
       - ./scripts/initialize_sentry.sh:/etc/sentry/initialize_sentry.sh
     entrypoint: /bin/sh -c "/etc/sentry/initialize_sentry.sh"
+    networks:
+      - guess-network
     
   guess-sentry-db:
     image: postgres:11.4
     container_name: guess-sentry-db
+    ports:
+      - "1432:5432"
     environment:
       POSTGRES_USER: sentry
       POSTGRES_PASSWORD: sentry
       POSTGRES_DB: sentry
     volumes:
       - sentry-postgres-data:/var/lib/postgresql/data
+    networks:
+      - guess-network
         
   guess-loki:
     container_name: guess-loki
@@ -70,6 +80,8 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - ./configs/loki-config.yaml:/etc/loki/local-config.yaml
+    networks:
+      - guess-network
   
 networks:
   guess-network:
