@@ -74,5 +74,5 @@ networks:
 volumes:
   sentry-data:
   sentry-postgres-data:
-  redis_data:
+  redis-data:
     driver: local
