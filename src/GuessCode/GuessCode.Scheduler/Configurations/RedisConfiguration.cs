@@ -7,13 +7,13 @@ public static class RedisConfiguration
 {
     public static void AddRedisConfiguration(this IHostApplicationBuilder builder)
     {
-        var redisHost = builder.Configuration["Redis:Host"];
-        var redisPassword = builder.Configuration["Redis:Password"];
+        var redisHost = builder.Configuration["Redis:Host"]!;
+        var redisPassword = builder.Configuration["Redis:Password"]!;
 
-        if (string.IsNullOrEmpty(redisHost) || string.IsNullOrEmpty(redisPassword))
+        /*if (string.IsNullOrEmpty(redisHost) || string.IsNullOrEmpty(redisPassword))
         {
             throw new ValidationException("Nullable redis credentials is prohibited");
-        }
+        }*/
         
         //Environment.SetEnvironmentVariable("REDIS_PASSWORD", redisPassword);
 
