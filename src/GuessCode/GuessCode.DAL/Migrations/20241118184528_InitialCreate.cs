@@ -168,7 +168,7 @@ namespace GuessCode.DAL.Migrations
                 column: "UserId",
                 unique: true);
             
-            migrationBuilder.Sql("INSERT INTO \"Role\" VALUES ('Admin'), ('USER');");
+            migrationBuilder.Sql("INSERT INTO \"Role\" VALUES (1, 'Admin'), (2, 'USER');");
         }
 
         /// <inheritdoc />
