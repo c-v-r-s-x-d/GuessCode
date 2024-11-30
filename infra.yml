@@ -54,10 +54,10 @@ services:
     volumes:
       - sentry-data:/var/lib/sentry/files
       - ./scripts/initialize_sentry.sh:/etc/sentry/initialize_sentry.sh
-    entrypoint: /bin/sh -c "chmod +x /etc/sentry/initialize_sentry.sh && /etc/sentry/initialize_sentry.sh"
+    entrypoint: /bin/sh -c "/etc/sentry/initialize_sentry.sh"
     networks:
       - guess-network
-  
+    
   guess-sentry-db:
     image: postgres:11.4
     container_name: guess-sentry-db

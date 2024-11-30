@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ожидание запуска Postgres
-until pg_isready -h $SENTRY_DB_HOST -p 5432 -U $SENTRY_DB_USER
+until pg_isready -h $SENTRY_DB_HOST -p 1432 -U $SENTRY_DB_USER
 do
   echo "Waiting for PostgreSQL to start..."
   sleep 2
