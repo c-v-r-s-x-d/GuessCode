@@ -20,7 +20,6 @@ public static class RedisConfiguration
         var redisConfiguration = ConfigurationOptions.Parse(redisHost);
         redisConfiguration.Password = redisPassword;
         redisConfiguration.AbortOnConnectFail = false;
-        redisConfiguration.ConnectRetry = 5;
 
         builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfiguration));
     }
