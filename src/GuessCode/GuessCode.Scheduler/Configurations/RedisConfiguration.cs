@@ -20,7 +20,7 @@ public static class RedisConfiguration
         //Environment.SetEnvironmentVariable("REDIS_PASSWORD", redisPassword);
 
         var redisConfiguration = ConfigurationOptions.Parse(redisHost);
-        redisConfiguration.Password = redisPassword;
+        //redisConfiguration.Password = redisPassword;
         redisConfiguration.AbortOnConnectFail = false;
         redisConfiguration.ConnectRetry = 5;
 
