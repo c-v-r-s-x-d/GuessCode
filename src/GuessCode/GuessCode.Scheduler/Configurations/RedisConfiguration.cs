@@ -9,6 +9,8 @@ public static class RedisConfiguration
     {
         var redisHost = builder.Configuration["Redis:Host"]!;
         var redisPassword = builder.Configuration["Redis:Password"]!;
+        
+        Console.WriteLine($"{redisHost} {redisPassword}");
 
         /*if (string.IsNullOrEmpty(redisHost) || string.IsNullOrEmpty(redisPassword))
         {
