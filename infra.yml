@@ -43,7 +43,7 @@ services:
       - SENTRY_SECRET_KEY=xV9uDuAp5L
       - SENTRY_DB_USER=sentry
       - SENTRY_DB_PASSWORD=sentry
-      - SENTRY_DB_HOST=sentry-postgres
+      - SENTRY_DB_HOST=guess-sentry-db
       - SENTRY_SERVER_EMAIL=admin@guesscode.com
       - SENTRY_ADMIN_EMAIL=admin@guesscode.com
       - SENTRY_ADMIN_PASSWORD=admin
