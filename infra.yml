@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  guess_db:
+    restart: always
+    image: postgres:11.4
+    container_name: guess_db
+    volumes:
+      - /tmp/data/core_db:/var/lib/postgresql/data
+      - ./init_core.sql:/docker-entrypoint-initdb.d/init_core.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - guess-network
+  
+  guess_redis:
+    image: redis:latest
+    container_name: guess_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "$REDIS_PASSWORD"]
+    
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    volumes:
+      - ./configs/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP
+      - "9464:9464" # Prometheus
+  
+  sentry:
+    image: sentry:latest
+    environment:
+      - SENTRY_SECRET_KEY=xV9uDuAp5L
+      - SENTRY_DB_USER=sentry
+      - SENTRY_DB_PASSWORD=sentry
+      - SENTRY_DB_HOST=sentry-postgres
+      - SENTRY_SERVER_EMAIL=admin@guesscode.com
+      - SENTRY_ADMIN_EMAIL=admin@guesscode.com
+      - SENTRY_ADMIN_PASSWORD=admin
+    ports:
+      - "9000:9000"
+    depends_on:
+      - sentry-postgres
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+      - ./scripts/initialize_sentry.sh:/etc/sentry/initialize_sentry.sh
+    entrypoint: /bin/sh -c "/etc/sentry/initialize_sentry.sh"
+    
+  sentry-postgres:
+    image: postgres:11.4
+    environment:
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: sentry
+      POSTGRES_DB: sentry
+    volumes:
+      - sentry-postgres-data:/var/lib/postgresql/data
+        
+  loki:
+    image: grafana/loki:2.8.2
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./configs/loki-config.yaml:/etc/loki/local-config.yaml
+  
+networks:
+  guess-network:
+
+volumes:
+  sentry-data:
+  sentry-postgres-data:
+  redis_data:
+    driver: local

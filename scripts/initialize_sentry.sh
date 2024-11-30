@@ -1,0 +1,26 @@
+#!/bin/bash
+# Ожидание запуска Postgres
+until pg_isready -h $SENTRY_DB_HOST -p 5432 -U $SENTRY_DB_USER
+do
+  echo "Waiting for PostgreSQL to start..."
+  sleep 2
+done
+
+# Инициализация базы данных
+sentry upgrade --noinput
+
+# Создание пользователя и команды
+sentry createuser --email admin@guesscode.com --password admin --superuser --no-input || true
+sentry init-config
+
+# Создание команды и проекта
+sentry organization create guesscode --slug=my-org --default || true
+sentry team create guesscode-team --organization guesscode || true
+sentry project create guesscode-project --team guesscode-team --platform dotnet || true
+
+# Получение DSN
+DSN=$(sentry exec -- python -c "import sentry_sdk; print(sentry_sdk.utils.get_default_dsn())")
+echo "SENTRY_DSN=$DSN" > /etc/sentry/dsn.env
+echo $DSN
+
+exec sentry run web

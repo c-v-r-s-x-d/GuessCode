@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  guess-code-backend:
+    build:
+      context: ./src/GuessCode
+      dockerfile: GuessCode.API/Dockerfile
+    image: guess-code-backend
+    container_name: guess-code-backend
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    ports:
+      - "5000:80"
+      - "50000:443"
+    networks:
+      - guess-network
+  
+  guess-code-scheduler:
+    build:
+      context: ./src/GuessCode
+      dockerfile: GuessCode.Scheduler/Dockerfile
+    image: guess-code-scheduler
+    container_name: guess-code-scheduler
+    ports:
+      - "5001:80"
+      - "50001:443"
+    networks:
+      - guess-network
+
+networks:
+  guess-network:
