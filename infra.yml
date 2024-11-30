@@ -19,9 +19,9 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    #environment:
-    #  - REDIS_PASSWORD=${REDIS_PASSWORD}
-    #command: ["redis-server", "--requirepass", "$REDIS_PASSWORD"]
+    environment:
+      - REDIS_PASSWORD=123
+    command: ["redis-server", "--requirepass", "123"]
     
   guess-otel-collector:
     container_name: guess-otel-collector
