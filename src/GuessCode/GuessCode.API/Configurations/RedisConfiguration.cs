@@ -15,10 +15,12 @@ public static class RedisConfiguration
             throw new ValidationException("Nullable redis credentials is prohibited");
         }
         
-        Environment.SetEnvironmentVariable("REDIS_PASSWORD", redisPassword);
+        //Environment.SetEnvironmentVariable("REDIS_PASSWORD", redisPassword);
 
         var redisConfiguration = ConfigurationOptions.Parse(redisHost);
-        redisConfiguration.Password = redisPassword;
+        //redisConfiguration.Password = redisPassword;
+        redisConfiguration.AbortOnConnectFail = false;
+        redisConfiguration.ConnectRetry = 5;
 
         builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfiguration));
     }
