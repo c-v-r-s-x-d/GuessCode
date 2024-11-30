@@ -1,0 +1,38 @@
+﻿using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Sentry;
+
+namespace GuessCode.API.Configurations;
+
+public static class OpenTelemetryConfiguration
+{
+    public static void AddOpenTelemetryConfiguration(this WebApplicationBuilder builder)
+    {
+        builder.WebHost.UseSentry(options =>
+        {
+            options.Dsn = "";
+            options.Debug = true;
+            options.TracesSampleRate = 1.0;
+        });
+
+        builder.Logging.ClearProviders();
+        builder.Logging.AddOpenTelemetry(options =>
+        {
+            options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("GuessCode"));
+            options.AddOtlpExporter(o => o.Endpoint = new Uri(""));
+        });
+
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(tracerProviderBuilder => tracerProviderBuilder
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("GuessCode"))
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddOtlpExporter(o => o.Endpoint = new Uri("")))
+            .WithMetrics(metricsProviderBuilder => metricsProviderBuilder
+                .AddAspNetCoreInstrumentation()
+                .AddRuntimeInstrumentation()
+                .AddPrometheusExporter());
+    }
+}
