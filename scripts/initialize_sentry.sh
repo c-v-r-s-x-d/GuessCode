@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ожидание запуска Postgres
-until psql -h $SENTRY_DB_HOST -p 5432 -U $SENTRY_DB_USER -c '\q' 2>/dev/null; do
+until psql -h $SENTRY_DB_HOST -p 1432 -U $SENTRY_DB_USER -c '\q' 2>/dev/null; do
   echo "Waiting for PostgreSQL..."
   sleep 5
 done
