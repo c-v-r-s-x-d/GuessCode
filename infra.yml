@@ -46,7 +46,7 @@ services:
     ports:
       - "9000:9000"
     depends_on:
-      - sentry-postgres
+      - guess_sentry_db
     volumes:
       - sentry-data:/var/lib/sentry/files
       - ./scripts/initialize_sentry.sh:/etc/sentry/initialize_sentry.sh
