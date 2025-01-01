@@ -32,5 +32,4 @@ app.UseEndpoints(endpoints =>
 });
 
 app.ApplyDatabaseMigrations();
-Console.WriteLine("Before running ...");
 app.Run();
