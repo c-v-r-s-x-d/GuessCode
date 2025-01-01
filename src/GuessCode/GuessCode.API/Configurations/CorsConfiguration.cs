@@ -8,7 +8,7 @@ public static class CorsConfiguration
         {
             options.AddPolicy("AllowAll", corsBuilder =>
             {
-                corsBuilder.WithOrigins("http://localhost:3001", "192.168.0.35", "localhost", "127.0.0.1", "0.0.0.0") 
+                corsBuilder.WithOrigins("http://localhost:3000", "192.168.0.35", "localhost", "127.0.0.1", "0.0.0.0") 
                     .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
