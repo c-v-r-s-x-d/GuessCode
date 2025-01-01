@@ -5,8 +5,11 @@ using GuessCode.Domain.Services;
 using GuessCode.Scheduler.Contracts;
 using GuessCode.Scheduler.Models;
 using GuessCode.Scheduler.Services;
+using GuessCode.Scheduler.Temp;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace GuessCode.Scheduler.Configurations;
 
@@ -28,7 +31,10 @@ public static class HangfireConfiguration
     
     public static void ConfigureHangfire(this WebApplication app)
     {
-        app.UseHangfireDashboard();
+        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = [new AuthWorkaroundFilterAttribute()]
+        });
 #pragma warning disable CS0618
         app.UseHangfireServer();
 #pragma warning restore CS0618

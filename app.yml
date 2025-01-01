@@ -23,7 +23,7 @@ services:
     image: guess-code-scheduler
     container_name: guess-code-scheduler
     ports:
-      - "5001:80"
+      - "5001:8080"
       - "50001:443"
     networks:
       - guess-network
