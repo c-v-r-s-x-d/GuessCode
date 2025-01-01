@@ -25,5 +25,6 @@ public static class RedisConfiguration
         Console.WriteLine($"Redis Host: {redisHost}");
 
         builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfiguration));
+        Console.WriteLine("RedisConnected");
     }
 }
