@@ -21,6 +21,8 @@ public static class RedisConfiguration
         //redisConfiguration.Password = redisPassword;
         redisConfiguration.AbortOnConnectFail = false;
         redisConfiguration.ConnectRetry = 5;
+        
+        Console.WriteLine($"Redis Host: {redisHost}");
 
         builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfiguration));
     }

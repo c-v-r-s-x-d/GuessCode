@@ -8,8 +8,6 @@ using GuessCode.Scheduler.Services;
 using GuessCode.Scheduler.Temp;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace GuessCode.Scheduler.Configurations;
 
