@@ -36,27 +36,27 @@ services:
     networks:
       - guess-network
   
-  guess-sentry:
-    image: sentry:latest
-    container_name: guess-sentry
-    environment:
-      - SENTRY_SECRET_KEY=xV9uDuAp5L
-      - SENTRY_DB_USER=sentry
-      - SENTRY_DB_PASSWORD=sentry
-      - SENTRY_DB_HOST=guess-sentry-db
-      - SENTRY_SERVER_EMAIL=admin@guesscode.com
-      - SENTRY_ADMIN_EMAIL=admin@guesscode.com
-      - SENTRY_ADMIN_PASSWORD=admin
-    ports:
-      - "9000:9000"
-    depends_on:
-      - guess-sentry-db
-    volumes:
-      - sentry-data:/var/lib/sentry/files
-      - ./scripts/initialize_sentry.sh:/etc/sentry/initialize_sentry.sh
-    entrypoint: /bin/sh -c "chmod +x /etc/sentry/initialize_sentry.sh && /etc/sentry/initialize_sentry.sh"
-    networks:
-      - guess-network
+#  guess-sentry:
+#    image: sentry:latest
+#    container_name: guess-sentry
+#    environment:
+#      - SENTRY_SECRET_KEY=xV9uDuAp5L
+#      - SENTRY_DB_USER=sentry
+#      - SENTRY_DB_PASSWORD=sentry
+#      - SENTRY_DB_HOST=guess-sentry-db
+#      - SENTRY_SERVER_EMAIL=admin@guesscode.com
+#      - SENTRY_ADMIN_EMAIL=admin@guesscode.com
+#      - SENTRY_ADMIN_PASSWORD=admin
+#    ports:
+#      - "9000:9000"
+#    depends_on:
+#      - guess-sentry-db
+#    volumes:
+#      - sentry-data:/var/lib/sentry/files
+#      - ./scripts/initialize_sentry.sh:/etc/sentry/initialize_sentry.sh
+#    entrypoint: /bin/sh -c "chmod +x /etc/sentry/initialize_sentry.sh && /etc/sentry/initialize_sentry.sh"
+#    networks:
+#      - guess-network
     
   guess-sentry-db:
     image: postgres:11.4
