@@ -1,36 +1,11 @@
-﻿auth_enabled: false
-
-server:
-  http_listen_port: 3100
-
-ingester:
-  lifecycler:
-    ring:
-      kvstore:
-        store: inmemory
-      replication_factor: 1
-
-schema_config:
-  configs:
-    - from: 2023-01-01
-      store: boltdb-shipper
-      object_store: filesystem
-      schema: v11
-      index:
-        prefix: index_
-        period: 24h
-
-storage_config:
-  boltdb_shipper:
-    active_index_directory: /tmp/loki/index
-    cache_location: /tmp/loki/boltdb-cache
-    cache_ttl: 24h
-    shared_store: filesystem
-  filesystem:
-    directory: /tmp/loki/chunks
-
-limits_config:
-  enforce_metric_name: false
-
-chunk_store_config:
-  max_look_back_period: 0s
+﻿apiVersion: 1
+datasources:
+  - name: Loki # Отображаемое имя нашего источника данных
+    type: loki # Тип источника
+    access: proxy #
+    orgId: 1 # Идентификатор организации (единица адм. деления в Grafana) которой будет доступен источник
+    url: http://192.168.0.35:3100 # Адрес откуда получать данные (здесь мы используем имя сервиса loki, т. к. компоуз создаст свою сеть в которой к контейнерам можно обращаться по имени compose-сервиса)
+    basicAuth: false # Для удобства демонстрации в Loki отключена авторизация, поэтому и тут она не зачем
+    isDefault: true #
+    version: 1 #
+    editable: false # Зпретим редактирование через интерфейс Grafana

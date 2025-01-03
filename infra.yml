@@ -94,6 +94,8 @@ services:
       # Дадим права администратора при анонимном входе
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - TZ=${SYSTEM_TIMEZONE:-Europe/Moscow}
+    volumes:
+      - ./configs:/etc/grafana/provisioning
     image: grafana/grafana:latest
     ports:
       - "3005:3000"
