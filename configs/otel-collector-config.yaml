@@ -10,7 +10,7 @@ exporters:
   prometheus:
     endpoint: "0.0.0.0:9464"
   loki:
-    endpoint: "http://loki:3100/loki/api/v1/push"
+    endpoint: "http://192.168.0.35:3100/loki/api/v1/push"
     labels:
       environment: production
 
