@@ -5,6 +5,8 @@ namespace GuessCode.API.Models.V1.Kata;
 
 public class KataDto
 {
+    public long Id { get; set; }
+    
     public string Title { get; set; } = null!;
     
     public ProgrammingLanguage ProgrammingLanguage { get; set; }
