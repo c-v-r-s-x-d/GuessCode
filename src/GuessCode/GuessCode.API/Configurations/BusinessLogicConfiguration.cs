@@ -15,6 +15,7 @@ public static class BusinessLogicConfiguration
         builder.Services.AddScoped<IUserRegisterService, UserRegisterService>();
         builder.Services.AddScoped<IKataSearchService, KataSearchService>();
         builder.Services.AddScoped<IKataSolveService, KataSolveService>();
+        builder.Services.AddScoped<IKataAdministrationService, KataAdministrationService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IProfileInfoService, ProfileInfoService>();
         builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
