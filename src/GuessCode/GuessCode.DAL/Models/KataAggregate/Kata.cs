@@ -39,7 +39,7 @@ public class KataJsonContent
     public string AnswerOptionsRawJson { get; set; }
     
     [NotMapped]
-    //[JsonIgnore]
+    [JsonIgnore]
     public List<AnswerOption> AnswerOptions { get; set; }
 }
 
