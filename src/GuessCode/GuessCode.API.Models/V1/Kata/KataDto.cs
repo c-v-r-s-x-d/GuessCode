@@ -14,8 +14,8 @@ public class KataDto
     public KataDifficulty KataDifficulty { get; set; }
     
     public KataType KataType { get; set; }
-    
-    public KataJsonContent? KataRawJsonContent { get; set; }
+
+    public KataJsonContent KataJsonContent { get; set; } = null!;
 
     public long AuthorId { get; set; }
 }

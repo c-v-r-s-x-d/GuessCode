@@ -19,7 +19,9 @@ public class AutoMapperConfig : Profile
         CreateMap<UserDto, User>()
             .ReverseMap();
         CreateMap<KataDto, Kata>()
-            .ReverseMap();
+            .ForMember(kata => kata.KataRawJsonContent,
+                expression => expression.MapFrom(dto => dto.KataJsonContent.ToString()));
+        CreateMap<Kata, KataDto>();
         CreateMap<KataAnswerDto, KataAnswer>()
             .ReverseMap();
         CreateMap<KataSolveResultDto, KataSolveResult>()
