@@ -18,12 +18,12 @@ public static class OpenTelemetryConfiguration
             options.TracesSampleRate = 1.0;
         });
 
-        builder.Logging.ClearProviders();
+        /*builder.Logging.ClearProviders();
         builder.Logging.AddOpenTelemetry(options =>
         {
             options.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("GuessCode"));
             options.AddOtlpExporter(o => o.Endpoint = new Uri(otelUri));
-        });
+        });*/
 
         builder.Services.AddOpenTelemetry()
             .WithTracing(tracerProviderBuilder => tracerProviderBuilder
