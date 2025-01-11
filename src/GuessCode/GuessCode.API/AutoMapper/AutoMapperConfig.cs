@@ -29,7 +29,7 @@ public class AutoMapperConfig : Profile
         CreateMap<Kata, KataDto>()
             .ForMember(dto => dto.KataJsonContent,
                 options => options.MapFrom<KataRawJsonContentResolver>())
-            .ForMember(dto => dto.KataJsonContent.AnswerOptionsRawJson, options => options.Ignore());
+            .ForPath(dto => dto.KataJsonContent.AnswerOptionsRawJson, options => options.Ignore());
         CreateMap<KataAnswerDto, KataAnswer>()
             .ReverseMap();
         CreateMap<KataSolveResultDto, KataSolveResult>()
