@@ -39,6 +39,7 @@ public class KataJsonContent
     public string AnswerOptionsRawJson { get; set; }
     
     [NotMapped]
+    [JsonIgnore]
     public List<AnswerOption> AnswerOptions => string.IsNullOrEmpty(AnswerOptionsRawJson)
         ? new List<AnswerOption>()
         : JsonConvert.DeserializeObject<List<AnswerOption>>(AnswerOptionsRawJson);
