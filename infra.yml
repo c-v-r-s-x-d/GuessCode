@@ -80,8 +80,9 @@ services:
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
-#    volumes:
-#      - ./configs/loki-config.yaml:/etc/loki/local-config.yaml
+    volumes:
+     - ./configs/loki-config.yaml:/etc/loki/local-config.yaml
+     - ./data/loki:/loki
     networks:
       - guess-network
     
@@ -89,9 +90,7 @@ services:
     container_name: guess-grafana
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-      # Включим доступ без авторизации
-      - GF_AUTH_ANONYMOUS_ENABLED=true # Не используйте **ANONYMOUS** настройки в проде
-      # Дадим права администратора при анонимном входе
+      - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - TZ=${SYSTEM_TIMEZONE:-Europe/Moscow}
     volumes:

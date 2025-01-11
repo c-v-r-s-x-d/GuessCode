@@ -1,5 +1,7 @@
 using GuessCode.API.Configurations;
 using GuessCode.Domain.Hubs;
+using Serilog;
+using Serilog.Sinks.Grafana.Loki;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,10 @@ builder.AddSettingsConfiguration();
 builder.AddDbConfiguration();
 builder.AddRedisConfiguration();
 builder.AddOpenTelemetryConfiguration();
+builder.AddLoggingConfiguration();
+    
+builder.Host.UseSerilog();
+
 
 var app = builder.Build();
 
