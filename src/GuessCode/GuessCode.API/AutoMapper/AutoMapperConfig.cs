@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GuessCode.API.AutoMapper.Resolvers;
 using GuessCode.API.Models.V1.Auth;
 using GuessCode.API.Models.V1.Kata;
 using GuessCode.API.Models.V1.Leaderboard;
@@ -21,12 +22,10 @@ public class AutoMapperConfig : Profile
             .ReverseMap();
         CreateMap<KataDto, Kata>()
             .ForMember(kata => kata.KataRawJsonContent,
-                expression => expression.MapFrom(dto => JsonConvert.SerializeObject(dto.KataJsonContent)));
-        CreateMap<KataJsonContent, KataJsonContent>() // Maps nested properties
-            .ForMember(dest => dest.AnswerOptions, opt => opt.MapFrom(src =>
-                string.IsNullOrEmpty(src.AnswerOptionsRawJson)
-                    ? new List<AnswerOption>()
-                    : JsonConvert.DeserializeObject<List<AnswerOption>>(src.AnswerOptionsRawJson)!));
+                options =>
+                {
+                    options.MapFrom<KataRawJsonContentResolver>();
+                });
         CreateMap<Kata, KataDto>();
         CreateMap<KataAnswerDto, KataAnswer>()
             .ReverseMap();
