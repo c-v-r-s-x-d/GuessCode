@@ -79,9 +79,9 @@ services:
       TZ: ${SYSTEM_TIMEZONE:-Europe/Moscow}
     ports:
       - "3100:3100"
-    command: -config.file=/etc/loki/loki-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
     volumes:
-     - ./configs/loki-config.yaml:/etc/loki/loki-config.yaml
+     - ./configs/loki-config.yaml:/etc/loki/local-config.yaml
      #- ./data/loki:/loki
     networks:
       - guess-network
