@@ -27,7 +27,7 @@ app.UseExceptionHandler();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowAll");
+app.UseCors("GuessCodeCorsPolicy");
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();

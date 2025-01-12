@@ -6,9 +6,9 @@ public static class CorsConfiguration
     {
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll", corsBuilder =>
+            options.AddPolicy("GuessCodeCorsPolicy", corsBuilder =>
             {
-                corsBuilder.WithOrigins("http://localhost:3000", "http://192.168.0.35:3000", "http://guess-code-ui:3000") 
+                corsBuilder.WithOrigins("http://guess-code.site") 
                     .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
