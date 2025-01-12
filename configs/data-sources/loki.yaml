@@ -1,0 +1,9 @@
+﻿apiVersion: 1
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://guess-loki:3100
+    isDefault: true
+    jsonData:
+      maxLines: 1000
