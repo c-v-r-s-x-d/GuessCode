@@ -82,7 +82,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
      - ./configs/loki-config.yaml:/etc/loki/local-config.yaml
-     - ./data/loki:/loki
+     #- ./data/loki:/loki
     networks:
       - guess-network
     
