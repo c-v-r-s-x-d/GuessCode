@@ -8,7 +8,11 @@ public static class CorsConfiguration
         {
             options.AddPolicy("GuessCodeCorsPolicy", corsBuilder =>
             {
-                corsBuilder.WithOrigins("http://guess-code.site") 
+                corsBuilder.WithOrigins(
+                        "http://guess-code.site", 
+                        "http://api.guess-code.site",
+                        "10.43.97.6"
+                    )
                     .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader();

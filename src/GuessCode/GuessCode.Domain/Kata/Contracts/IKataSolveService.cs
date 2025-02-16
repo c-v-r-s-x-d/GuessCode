@@ -4,5 +4,5 @@ namespace GuessCode.Domain.Contracts;
 
 public interface IKataSolveService
 {
-    Task<KataSolveResult> SolveKata(KataAnswer kataAnswer, CancellationToken cancellationToken);
+    Task<KataSolveResult> SolveKata(long userId, KataAnswer kataAnswer, CancellationToken cancellationToken);
 }

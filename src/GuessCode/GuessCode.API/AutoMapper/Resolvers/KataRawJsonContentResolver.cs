@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 
 namespace GuessCode.API.AutoMapper.Resolvers;
 
-public class KataRawJsonContentResolver : IValueResolver<KataDto, Kata, string>, IValueResolver<Kata, KataDto, KataJsonContent>
+/*public class KataRawJsonContentResolver : IValueResolver<KataDto, Kata, string>, IValueResolver<Kata, KataDto, KataJsonContent>
 {
-    public string Resolve(KataDto source, Kata destination, string destMember, ResolutionContext context)
+    /*public string Resolve(KataDto source, Kata destination, string destMember, ResolutionContext context)
     {
         source.KataJsonContent.AnswerOptionsRawJson = 
             JsonConvert.SerializeObject(source.KataJsonContent.AnswerOptions);
@@ -26,5 +26,5 @@ public class KataRawJsonContentResolver : IValueResolver<KataDto, Kata, string>,
             ? []
             : JsonConvert.DeserializeObject<List<AnswerOption>>(kataJsonContent.AnswerOptionsRawJson);
         return kataJsonContent;
-    }
-}
+    }#1#
+}*/

@@ -8,6 +8,7 @@ using GuessCode.DAL.Models.KataAggregate;
 using GuessCode.DAL.Models.UserAggregate;
 using GuessCode.Domain.Auth.Models;
 using GuessCode.Domain.Models;
+using Newtonsoft.Json;
 
 namespace GuessCode.API.AutoMapper;
 
@@ -19,17 +20,35 @@ public class AutoMapperConfig : Profile
             .ReverseMap();
         CreateMap<UserDto, User>()
             .ReverseMap();
-        CreateMap<KataDto, Kata>()
+        /*CreateMap<KataDto, Kata>()
             .ForMember(kata => kata.KataRawJsonContent,
                 options =>
                 {
                     options.MapFrom<KataRawJsonContentResolver>();
                 })
             .ForMember(kata => kata.KataJsonContent, options => options.Ignore());
-        CreateMap<Kata, KataDto>()
+        /*CreateMap<Kata, KataDto>()
             .ForMember(dto => dto.KataJsonContent,
                 options => options.MapFrom<KataRawJsonContentResolver>())
             .ForPath(dto => dto.KataJsonContent.AnswerOptionsRawJson, options => options.Ignore());
+        #1#*/
+
+        CreateMap<Kata, KataDto>()
+            .ForMember(dest => dest.KataJsonContent, opt => opt.MapFrom(src =>
+                string.IsNullOrEmpty(src.KataRawJsonContent)
+                    ? new KataJsonContent()
+                    : JsonConvert.DeserializeObject<KataJsonContent>(src.KataRawJsonContent) ?? new KataJsonContent()))
+            .AfterMap((src, dest) =>
+            {
+                dest.KataJsonContent.AnswerOptions =
+                    dest.KataJsonContent.GetPublicAnswerOptions();
+            });
+
+        CreateMap<KataDto, Kata>()
+            .ForMember(dest => dest.KataRawJsonContent, opt => opt.MapFrom(src =>
+                JsonConvert.SerializeObject(src.KataJsonContent)));
+
+        
         CreateMap<KataAnswerDto, KataAnswer>()
             .ReverseMap();
         CreateMap<KataSolveResultDto, KataSolveResult>()

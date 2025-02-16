@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.KataAggregate;
+using GuessCode.DAL.Models.UserAggregate;
 using GuessCode.Domain.Contracts;
 using GuessCode.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ public class KataSolveService : IKataSolveService
         _context = context;
     }
 
-    public async Task<KataSolveResult> SolveKata(KataAnswer kataAnswer, CancellationToken cancellationToken)
+    public async Task<KataSolveResult> SolveKata(long userId, KataAnswer kataAnswer, CancellationToken cancellationToken)
     {
         var kata = await _context
                        .Set<Kata>()
@@ -25,6 +26,15 @@ public class KataSolveService : IKataSolveService
 
         var isAnswerCorrect =
             kata.KataJsonContent.AnswerOptions.Single(x => x.OptionId == kataAnswer.OptionId).IsCorrect;
+
+        if (isAnswerCorrect)
+        {
+            var user = await _context
+                .Set<User>()
+                .SingleAsync(x => x.Id == userId, cancellationToken);
+            user.Rating += 25;
+            await _context.SaveChangesAsync(cancellationToken);
+        }
 
         return new KataSolveResult
         {

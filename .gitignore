@@ -1,0 +1,63 @@
+# Общие настройки для всех IDE JetBrains
+.idea/
+*.iml
+*.iws
+out/
+.gradle/
+build/
+*.class
+# Rider-специфические файлы
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/shelf/
+.idea/**/modules.xml
+.idea/**/vcs.xml
+.idea/**/assetFiles.version
+.idea/**/.idea_modules/
+.idea/**/scratches/
+.idea/.idea.*/  # Временные файлы настроек
+.idea/dataSources/
+.idea/dataSources.ids
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+
+# Конфигурации среды выполнения
+.idea/**/runConfigurations/
+.idea/**/deployment.xml
+
+# Логи и временные файлы
+*.log
+logs/
+tmp/
+*.tmp
+*.bak
+*.swp
+
+# Rider Caches
+.idea/caches/
+.idea/workspace.xml
+
+# Сгенерированные файлы C#
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.config
+*.cache
+*.csproj.user
+
+# Rider Unity Plugin
+.idea/**/EditorInstance.json
+
+# Rider dotnet tools
+.dotnet/
+
+# Пользовательские настройки для Linux/OSX/Windows
+.DS_Store
+Thumbs.db
+
+# Файлы lock для nuget и других пакетов
+project.lock.json

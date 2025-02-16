@@ -26,6 +26,7 @@ public class KataSolveController : BaseGuessController
     public async Task<KataSolveResultDto> SolveKata([FromBody] KataAnswerDto kataAnswerDto, CancellationToken cancellationToken)
     {
         var kataAnswer = _mapper.Map<KataAnswer>(kataAnswerDto);
-        return _mapper.Map<KataSolveResultDto>(await _kataSolveService.SolveKata(kataAnswer, cancellationToken));
+        return _mapper.Map<KataSolveResultDto>(
+            await _kataSolveService.SolveKata(UserId, kataAnswer, cancellationToken));
     }
 }
