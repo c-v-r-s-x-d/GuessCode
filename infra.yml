@@ -12,7 +12,7 @@ services:
     volumes:
       - /tmp/data/core_db:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5432:5432"
+      - "15432:5432"
     networks:
       - guess-network
   
@@ -20,12 +20,9 @@ services:
     image: redis:latest
     container_name: guess-redis
     ports:
-      - "127.0.0.1:6379:6379"
+      - "16379:6379"
     volumes:
       - redis-data:/data
-    #environment:
-    #  - REDIS_PASSWORD=123
-    #command: ["redis-server", "--requirepass", "123"]
     networks:
       - guess-network
     

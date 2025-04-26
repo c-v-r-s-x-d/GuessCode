@@ -9,9 +9,11 @@ public static class CorsConfiguration
             options.AddPolicy("GuessCodeCorsPolicy", corsBuilder =>
             {
                 corsBuilder.WithOrigins(
-                        "http://guess-code.site", 
-                        "http://api.guess-code.site",
-                        "10.43.97.6"
+                        "http://guess-code.ru", 
+                        "http://api.guess-code.ru",
+                        "185.102.139.119",
+                        "127.0.0.1",
+                        "localhost"
                     )
                     .AllowCredentials()
                     .AllowAnyMethod()

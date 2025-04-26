@@ -52,5 +52,5 @@
       <ProjectReference Include="..\GuessCode.DAL\GuessCode.DAL.csproj" />
       <ProjectReference Include="..\GuessCode.Domain\GuessCode.Domain.csproj" />
     </ItemGroup>
-
+    
 </Project>

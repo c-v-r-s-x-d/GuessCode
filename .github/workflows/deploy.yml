@@ -73,16 +73,16 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /home/${{ secrets.SSH_USER }}"
 
-#      - name: Copy infra.yml to remote server (Infra deploy 3/4)
-#        run: |
-#          scp infra.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/infra.yml
-#
-#      - name: Deploy containers on remote server (Infra deploy 4/4)
-#        run: |
-#          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-#            docker compose -f /home/${{ secrets.SSH_USER }}/infra.yml down --remove-orphans
-#            docker compose -f /home/${{ secrets.SSH_USER }}/infra.yml up -d
-#          EOF
+      - name: Copy infra.yml to remote server (Infra deploy 3/4)
+        run: |
+          scp infra.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/infra.yml
+
+      - name: Deploy containers on remote server (Infra deploy 4/4)
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            docker compose -f /home/${{ secrets.SSH_USER }}/infra.yml down --remove-orphans
+            docker compose -f /home/${{ secrets.SSH_USER }}/infra.yml up -d
+          EOF
       
       - name: Kubernetes set context
         uses: Azure/k8s-set-context@v3

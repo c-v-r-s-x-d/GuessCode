@@ -24,6 +24,8 @@ spec:
               name: psql-socket
             - mountPath: /var/run/redis
               name: redis-socket
+            - mountPath: /app/wwwroot
+              name: static-volume
       volumes:
         - name: psql-socket
           hostPath:
@@ -33,6 +35,9 @@ spec:
           hostPath:
             path: /var/run/redis
             type: DirectoryOrCreate
+        - name: static-volume
+          persistentVolumeClaim:
+            claimName: static-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -84,6 +89,20 @@ spec:
       targetPort: 8080
   type: ClusterIP
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guesscode-scheduler-service
+  namespace: dev
+spec:
+  selector:
+    app: guesscode-scheduler
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 8080
+  type: ClusterIP
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -91,13 +110,13 @@ metadata:
   namespace: dev
   annotations:
     traefik.ingress.k8s.io/router.middlewares: cors@kubernetescrd
-    traefik.ingress.kubernetes.io/cors-allow-origin: "http://guess-code.site"
+    traefik.ingress.kubernetes.io/cors-allow-origin: "http://guess-code.ru"
     traefik.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
     traefik.ingress.kubernetes.io/cors-allow-headers: "Authorization, Content-Type"
     traefik.ingress.kubernetes.io/cors-allow-credentials: "true"
 spec:
   rules:
-    - host: api.guess-code.site
+    - host: api.guess-code.ru
       http:
         paths:
           - path: /
@@ -107,3 +126,35 @@ spec:
                 name: guesscode-api-service
                 port:
                   number: 5000
+    - host: hangfire.guess-code.ru
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: guesscode-scheduler-service
+                port:
+                  number: 5001
+    - host: guess-code.ru
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: guesscode-frontend-service
+                port:
+                  number: 80
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: static-pvc
+  namespace: dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

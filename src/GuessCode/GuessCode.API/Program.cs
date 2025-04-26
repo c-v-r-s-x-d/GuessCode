@@ -34,4 +34,5 @@ app.UseEndpoints(endpoints =>
 });
 
 app.ApplyDatabaseMigrations();
+app.ApplyStaticFiles();
 app.Run();

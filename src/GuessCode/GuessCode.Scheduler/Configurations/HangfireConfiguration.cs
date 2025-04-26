@@ -34,9 +34,18 @@ public static class HangfireConfiguration
             Authorization = [new AuthWorkaroundFilterAttribute()]
         });
 #pragma warning disable CS0618
-        app.UseHangfireServer();
+        app.UseHangfireServer(new BackgroundJobServerOptions
+        {
+            WorkerCount = 1
+        });
 #pragma warning restore CS0618
 
+        app.MapFallback(context =>
+        {
+            context.Response.Redirect("/hangfire", permanent: true);
+            return Task.CompletedTask;
+        });
+        
         var scheduledJobs = app.Configuration
             .GetSection(ScheduledSection)
             .Get<List<ScheduledCommand>>()!;
