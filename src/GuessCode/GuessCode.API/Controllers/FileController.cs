@@ -27,9 +27,10 @@ public class FileController : BaseGuessController
         }
         
         using var memoryStream = new MemoryStream();
+        var fileExtension = Path.GetExtension(file.FileName);
         await file.CopyToAsync(memoryStream, cancellationToken);
         var fileBytes = memoryStream.ToArray();
         
-        return await _fileUploaderService.UploadFile(fileBytes, cancellationToken);
+        return await _fileUploaderService.UploadFile(fileBytes, fileExtension, cancellationToken);
     }
 }

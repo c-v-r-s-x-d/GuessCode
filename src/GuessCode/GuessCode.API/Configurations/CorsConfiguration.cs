@@ -13,7 +13,8 @@ public static class CorsConfiguration
                         "http://api.guess-code.ru",
                         "185.102.139.119",
                         "127.0.0.1",
-                        "localhost"
+                        "localhost",
+                        "45.43.88.41"
                     )
                     .AllowCredentials()
                     .AllowAnyMethod()

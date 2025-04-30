@@ -6,12 +6,12 @@ public class FileUploaderService : IFileUploaderService
 {
     private const string UploadFolder = @"/app/wwwroot";
     
-    public async Task<Guid> UploadFile(byte[] fileContent, CancellationToken cancellationToken)
+    public async Task<Guid> UploadFile(byte[] fileContent, string fileExtension, CancellationToken cancellationToken)
     {
         EnsureDirectoryExists();
         
         var fileId = Guid.NewGuid();
-        var fileName = $"{fileId}.jpg";
+        var fileName = $"{fileId}{fileExtension}";
         var filePath = Path.Combine(UploadFolder, fileName);
         
         await System.IO.File.WriteAllBytesAsync(filePath, fileContent, cancellationToken);
