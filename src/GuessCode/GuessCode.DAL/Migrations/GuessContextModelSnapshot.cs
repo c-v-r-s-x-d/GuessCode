@@ -42,6 +42,9 @@ namespace GuessCode.DAL.Migrations
                     b.Property<int>("KataType")
                         .HasColumnType("integer");
 
+                    b.Property<int>("PointsReward")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ProgrammingLanguage")
                         .HasColumnType("integer");
 
@@ -53,6 +56,37 @@ namespace GuessCode.DAL.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Kata");
+                });
+
+            modelBuilder.Entity("GuessCode.DAL.Models.KataAggregate.KataCodeExecutionResult", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ExecutedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("KataId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Output")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PassedTestCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalTestCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KataId");
+
+                    b.ToTable("KataCodeExecutionResult");
                 });
 
             modelBuilder.Entity("GuessCode.DAL.Models.RoleAggregate.Role", b =>
@@ -91,6 +125,33 @@ namespace GuessCode.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("GitHubProfile");
+                });
+
+            modelBuilder.Entity("GuessCode.DAL.Models.UserAggregate.RatingChange", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("ChangeReason")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("ChangedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RatingChangeValue")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RatingChange");
                 });
 
             modelBuilder.Entity("GuessCode.DAL.Models.UserAggregate.User", b =>
@@ -192,11 +253,33 @@ namespace GuessCode.DAL.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("GuessCode.DAL.Models.KataAggregate.KataCodeExecutionResult", b =>
+                {
+                    b.HasOne("GuessCode.DAL.Models.KataAggregate.Kata", "Kata")
+                        .WithMany("KataCodeExecutionResults")
+                        .HasForeignKey("KataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Kata");
+                });
+
             modelBuilder.Entity("GuessCode.DAL.Models.UserAggregate.GitHubProfile", b =>
                 {
                     b.HasOne("GuessCode.DAL.Models.UserAggregate.User", "User")
                         .WithOne("GitHubProfile")
                         .HasForeignKey("GuessCode.DAL.Models.UserAggregate.GitHubProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GuessCode.DAL.Models.UserAggregate.RatingChange", b =>
+                {
+                    b.HasOne("GuessCode.DAL.Models.UserAggregate.User", "User")
+                        .WithMany("RatingChanges")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -238,6 +321,11 @@ namespace GuessCode.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("GuessCode.DAL.Models.KataAggregate.Kata", b =>
+                {
+                    b.Navigation("KataCodeExecutionResults");
+                });
+
             modelBuilder.Entity("GuessCode.DAL.Models.RoleAggregate.Role", b =>
                 {
                     b.Navigation("Users");
@@ -248,6 +336,8 @@ namespace GuessCode.DAL.Migrations
                     b.Navigation("AuthoredKatas");
 
                     b.Navigation("GitHubProfile");
+
+                    b.Navigation("RatingChanges");
 
                     b.Navigation("UserProfile");
                 });

@@ -30,6 +30,8 @@ public class User : BaseEntity<long>
     
     public List<Kata> ResolvedKatas { get; set; }
     
+    public List<RatingChange> RatingChanges { get; set; }
+    
     public long? RoleId { get; set; }
     public Role Role { get; set; }
 }

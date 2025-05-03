@@ -30,14 +30,9 @@ public class ProfileInfoController : BaseGuessController
     }
 
     [HttpPost]
-    [Route("{userId}")]
-    public async Task UpdateAvatar([FromQuery] long userId, [FromForm] IFormFile file, CancellationToken cancellationToken)
+    [Route("avatar")]
+    public async Task UpdateAvatar(IFormFile file, CancellationToken cancellationToken)
     {
-        if (userId != UserId)
-        {
-            throw new ValidationException("Permission denied");
-        }
-        
         if (file is null || file.Length == 0)
         {
             throw new ValidationException("File is empty");
@@ -53,6 +48,6 @@ public class ProfileInfoController : BaseGuessController
         await file.CopyToAsync(memoryStream, cancellationToken);
         var fileBytes = memoryStream.ToArray();
         
-        await _profileInfoService.UpdateAvatar(userId, fileBytes, fileExtension, cancellationToken);
+        await _profileInfoService.UpdateAvatar(UserId, fileBytes, fileExtension, cancellationToken);
     }
 }

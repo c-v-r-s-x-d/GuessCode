@@ -7,5 +7,6 @@ public static class SettingsConfiguration
     public static void AddSettingsConfiguration(this IHostApplicationBuilder builder)
     {
         builder.Services.Configure<CredentialSettings>(builder.Configuration.GetSection("CredentialSettings"));
+        builder.Services.Configure<CodeExecutionSettings>(builder.Configuration.GetSection("CodeExecutionSettings"));
     }
 }

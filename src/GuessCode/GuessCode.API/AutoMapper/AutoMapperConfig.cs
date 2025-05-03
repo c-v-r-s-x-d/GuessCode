@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using GuessCode.API.AutoMapper.Resolvers;
 using GuessCode.API.Models.V1.Auth;
 using GuessCode.API.Models.V1.Kata;
 using GuessCode.API.Models.V1.Leaderboard;
@@ -20,18 +19,6 @@ public class AutoMapperConfig : Profile
             .ReverseMap();
         CreateMap<UserDto, User>()
             .ReverseMap();
-        /*CreateMap<KataDto, Kata>()
-            .ForMember(kata => kata.KataRawJsonContent,
-                options =>
-                {
-                    options.MapFrom<KataRawJsonContentResolver>();
-                })
-            .ForMember(kata => kata.KataJsonContent, options => options.Ignore());
-        /*CreateMap<Kata, KataDto>()
-            .ForMember(dto => dto.KataJsonContent,
-                options => options.MapFrom<KataRawJsonContentResolver>())
-            .ForPath(dto => dto.KataJsonContent.AnswerOptionsRawJson, options => options.Ignore());
-        #1#*/
 
         CreateMap<Kata, KataDto>()
             .ForMember(dest => dest.KataJsonContent, opt => opt.MapFrom(src =>
@@ -49,9 +36,13 @@ public class AutoMapperConfig : Profile
                 JsonConvert.SerializeObject(src.KataJsonContent)));
 
         
-        CreateMap<KataAnswerDto, KataAnswer>()
+        CreateMap<KataCodeReadingAnswerDto, KataCodeReadingAnswer>()
             .ReverseMap();
-        CreateMap<KataSolveResultDto, KataSolveResult>()
+        CreateMap<KataCodeReadingSolveResultDto, KataCodeReadingSolveResult>()
+            .ReverseMap();
+        CreateMap<KataBugFindingAnswerDto, KataBugFindingAnswer>()
+            .ReverseMap();
+        CreateMap<KataBugFindingSolveResultDto, KataBugFindingSolveResult>()
             .ReverseMap();
         CreateMap<ProfileInfoDto, ProfileInfo>()
             .ReverseMap();

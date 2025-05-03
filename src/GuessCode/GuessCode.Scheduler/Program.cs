@@ -6,6 +6,8 @@ builder.AddRedisConfiguration();
 builder.AddDatabaseConfiguration();
 builder.AddMediatrConfiguration();
 builder.AddHangfireConfiguration();
+builder.AddSettingsConfiguration();
+builder.AddBusinessLogicConfiguration();
 
 var app = builder.Build();
 

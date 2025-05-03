@@ -15,6 +15,10 @@ public class Kata : BaseEntity<long>
     public KataDifficulty KataDifficulty { get; set; }
 
     public KataType KataType { get; set; }
+    
+    public List<KataCodeExecutionResult> KataCodeExecutionResults { get; set; }
+    
+    public int PointsReward { get; set; }
 
     [JsonIgnore]
     public string KataRawJsonContent { get; set; }

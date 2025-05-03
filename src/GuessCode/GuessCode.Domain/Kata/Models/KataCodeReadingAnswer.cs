@@ -1,6 +1,6 @@
 ﻿namespace GuessCode.Domain.Models;
 
-public class KataAnswer
+public class KataCodeReadingAnswer
 {
     public long KataId { get; set; }
     public int OptionId { get; set; }

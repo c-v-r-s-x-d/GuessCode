@@ -169,6 +169,8 @@ namespace GuessCode.DAL.Migrations
                 unique: true);
             
             migrationBuilder.Sql("INSERT INTO \"Role\" VALUES (1, 'Admin'), (2, 'User');");
+            migrationBuilder.Sql(
+                "INSERT INTO \"User\" (\"Id\", \"Username\", \"Password\", \"Email\", \"RegistrationDate\", \"Rank\", \"Rating\") VALUES (-1, 'admin', 'not-for-logining', 'admin@guess-code.ru', '2025-05-03 12:00:00', 0, 0);");
         }
 
         /// <inheritdoc />

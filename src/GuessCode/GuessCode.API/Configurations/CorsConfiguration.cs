@@ -14,7 +14,9 @@ public static class CorsConfiguration
                         "185.102.139.119",
                         "127.0.0.1",
                         "localhost",
-                        "45.43.88.41"
+                        "45.43.88.41",
+                        "80.76.32.227",
+                        "http://localhost:3000"
                     )
                     .AllowCredentials()
                     .AllowAnyMethod()

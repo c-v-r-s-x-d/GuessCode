@@ -54,6 +54,7 @@ spec:
       labels:
         app: guesscode-scheduler
     spec:
+      serviceAccountName: guesscode-runner
       containers:
         - name: guesscode-scheduler-container
           image: my-dockerhub-username/guesscode-scheduler:latest
@@ -74,6 +75,36 @@ spec:
           hostPath:
             path: /var/run/redis
             type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: guesscode-runner
+  namespace: dev
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: runner-role
+  namespace: dev
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "pods/status", "configmaps"]
+    verbs: ["create", "get", "list", "watch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: runner-rolebinding
+  namespace: dev
+subjects:
+  - kind: ServiceAccount
+    name: guesscode-runner
+    namespace: dev
+roleRef:
+  kind: Role
+  name: runner-role
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
 kind: Service

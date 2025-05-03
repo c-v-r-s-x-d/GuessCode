@@ -2,7 +2,4 @@
 
 namespace GuessCode.Domain.Scheduled.Requests;
 
-public class ProcessPendingNotificationsCommand : IRequest
-{
-    
-}
+public class ProcessPendingNotificationsCommand : IRequest;

@@ -18,4 +18,6 @@ public class KataDto
     public KataJsonContent KataJsonContent { get; set; } = null!;
 
     public long AuthorId { get; set; }
+    
+    public bool IsKataResolved { get; set; }
 }

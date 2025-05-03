@@ -2,9 +2,9 @@
 
 public enum KataType
 {
-    GuessAnswer = 1,
+    CodeReading = 1,
     
-    CodeAnalysis = 2,
+    BugFinding = 2,
     
     CodeReview = 3
 }

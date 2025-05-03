@@ -14,19 +14,30 @@ namespace GuessCode.API.Controllers;
 public class KataSolveController : BaseGuessController
 {
     private readonly IMapper _mapper;
-    private readonly IKataSolveService _kataSolveService;
+    private readonly IKataCodeReadingSolveService _kataCodeReadingSolveService;
+    private readonly IKataBugFindingSolveService _kataBugFindingSolveService;
 
-    public KataSolveController(IKataSolveService kataSolveService, IMapper mapper)
+    public KataSolveController(IKataCodeReadingSolveService kataCodeReadingSolveService, IMapper mapper, IKataBugFindingSolveService kataBugFindingSolveService)
     {
-        _kataSolveService = kataSolveService;
+        _kataCodeReadingSolveService = kataCodeReadingSolveService;
         _mapper = mapper;
+        _kataBugFindingSolveService = kataBugFindingSolveService;
     }
 
-    [HttpPut]
-    public async Task<KataSolveResultDto> SolveKata([FromBody] KataAnswerDto kataAnswerDto, CancellationToken cancellationToken)
+    [HttpPut("code-reading")]
+    public async Task<KataCodeReadingSolveResultDto> SolveCodeReadingKata([FromBody] KataCodeReadingAnswerDto kataCodeReadingAnswerDto, CancellationToken cancellationToken)
     {
-        var kataAnswer = _mapper.Map<KataAnswer>(kataAnswerDto);
-        return _mapper.Map<KataSolveResultDto>(
-            await _kataSolveService.SolveKata(UserId, kataAnswer, cancellationToken));
+        var kataAnswer = _mapper.Map<KataCodeReadingAnswer>(kataCodeReadingAnswerDto);
+        return _mapper.Map<KataCodeReadingSolveResultDto>(
+            await _kataCodeReadingSolveService.SolveKata(UserId, kataAnswer, cancellationToken));
+    }
+
+    [HttpPut("bug-finding")]
+    public async Task<KataBugFindingSolveResultDto> SolveBugFindingKata(
+        [FromBody] KataBugFindingAnswerDto kataBugFindingAnswerDto, CancellationToken cancellationToken)
+    {
+        var kataAnswer = _mapper.Map<KataBugFindingAnswer>(kataBugFindingAnswerDto);
+        return _mapper.Map<KataBugFindingSolveResultDto>(
+            await _kataBugFindingSolveService.SolveKata(UserId, kataAnswer, cancellationToken));
     }
 }

@@ -26,7 +26,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/guesscode-api,${{ secrets.DOCKER_USERNAME }}/guesscode-scheduler
+          images: ${{ secrets.DOCKER_USERNAME }}/guesscode-api,${{ secrets.DOCKER_USERNAME }}/guesscode-scheduler,${{ secrets.DOCKER_USERNAME }}/java-runner,${{ secrets.DOCKER_USERNAME }}/cpp-runner,${{ secrets.DOCKER_USERNAME }}/csharp-runner${{ secrets.DOCKER_USERNAME }}/python-runner
           tags: |
             type=sha
             type=raw,value=latest
@@ -50,6 +50,34 @@ jobs:
           file: ./src/GuessCode/GuessCode.Scheduler/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/guesscode-scheduler:${{ github.sha }}
+          
+      - name: Build and push cpp-compiler
+        uses: docker/build-push-action@v5
+        with:
+          file: ./src/GuessCode/GuessCode.Scheduler/compilers/cpp-runner/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/cpp-runner:latest
+          
+      - name: Build and push csharp-compiler
+        uses: docker/build-push-action@v5
+        with:
+          file: ./src/GuessCode/GuessCode.Scheduler/compilers/csharp-runner/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/csharp-runner:latest
+          
+      - name: Build and push java-compiler
+        uses: docker/build-push-action@v5
+        with:
+          file: ./src/GuessCode/GuessCode.Scheduler/compilers/java-runner/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/java-runner:latest
+          
+      - name: Build and push python-interpreter
+        uses: docker/build-push-action@v5
+        with:
+          file: ./src/GuessCode/GuessCode.Scheduler/compilers/python-runner/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/python-runner:latest
 
   deploy:
     runs-on: ubuntu-latest
