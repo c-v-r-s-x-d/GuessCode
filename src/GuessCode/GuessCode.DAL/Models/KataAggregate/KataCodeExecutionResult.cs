@@ -13,6 +13,10 @@ public class KataCodeExecutionResult : BaseEntity<Guid>
     public string Output { get; set; }
     
     public string Error { get; set; }
+
+    public decimal MemoryTaken { get; set; }
+    
+    public decimal TimeElapsed { get; set; }
     
     public int TotalTestCount { get; set; }
     

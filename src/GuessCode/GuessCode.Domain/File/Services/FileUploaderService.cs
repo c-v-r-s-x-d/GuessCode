@@ -4,26 +4,27 @@ namespace GuessCode.Domain.File.Services;
 
 public class FileUploaderService : IFileUploaderService
 {
-    private const string UploadFolder = @"/app/wwwroot";
+    private const string UploadStaticFolder = @"/app/wwwroot";
+    private const string UploadLocalFolder = @"/app/local";
     
-    public async Task<Guid> UploadFile(byte[] fileContent, string fileExtension, CancellationToken cancellationToken)
+    public async Task<Guid> UploadFile(byte[] fileContent, string fileExtension, bool uploadInStaticFolder, CancellationToken cancellationToken)
     {
-        EnsureDirectoryExists();
+        EnsureDirectoryExists(uploadInStaticFolder ? UploadStaticFolder : UploadLocalFolder);
         
         var fileId = Guid.NewGuid();
         var fileName = $"{fileId}{fileExtension}";
-        var filePath = Path.Combine(UploadFolder, fileName);
+        var filePath = Path.Combine(uploadInStaticFolder ? UploadStaticFolder : UploadLocalFolder, fileName);
         
         await System.IO.File.WriteAllBytesAsync(filePath, fileContent, cancellationToken);
 
         return fileId;
     }
 
-    private static void EnsureDirectoryExists()
+    private static void EnsureDirectoryExists(string folder)
     {
-        if (!Directory.Exists(UploadFolder))
+        if (!Directory.Exists(folder))
         {
-            Directory.CreateDirectory(UploadFolder);
+            Directory.CreateDirectory(folder);
         }
     }
 }

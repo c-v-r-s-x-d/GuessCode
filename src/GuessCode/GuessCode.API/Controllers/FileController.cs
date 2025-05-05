@@ -19,7 +19,7 @@ public class FileController : BaseGuessController
     }
 
     [HttpPost]
-    public async Task<Guid> UploadFile(IFormFile? file, CancellationToken cancellationToken)
+    public async Task<Guid> UploadFile(IFormFile? file, bool uploadInStaticFolder, CancellationToken cancellationToken)
     {
         if (file is null || file.Length == 0)
         {
@@ -31,6 +31,6 @@ public class FileController : BaseGuessController
         await file.CopyToAsync(memoryStream, cancellationToken);
         var fileBytes = memoryStream.ToArray();
         
-        return await _fileUploaderService.UploadFile(fileBytes, fileExtension, cancellationToken);
+        return await _fileUploaderService.UploadFile(fileBytes, fileExtension, uploadInStaticFolder, cancellationToken);
     }
 }

@@ -43,7 +43,7 @@ public class ProfileInfoService : IProfileInfoService
             .Set<UserProfile>()
             .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken) ?? throw new ValidationException($"Profile for user {userId} not found");
         
-        var fileId = await _fileUploaderService.UploadFile(avatar, fileExtension, cancellationToken);
+        var fileId = await _fileUploaderService.UploadFile(avatar, fileExtension, true, cancellationToken);
         
         userInfo.AvatarUrl = fileId.ToString();
         await _context.SaveChangesAsync(cancellationToken);
