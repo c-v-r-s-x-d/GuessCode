@@ -27,7 +27,7 @@ public class KataSearchService : IKataSearchService
     public async Task<IReadOnlyCollection<Kata>> Search(KataDifficulty? kataDifficulty, ProgrammingLanguage? kataLanguage, KataType? kataType,
         CancellationToken cancellationToken)
     {
-        var query = _context.Set<Kata>().AsNoTracking();
+        var query = _context.Set<Kata>().AsNoTracking().Where(x => x.IsApproved);
 
         if (kataDifficulty is not null)
         {

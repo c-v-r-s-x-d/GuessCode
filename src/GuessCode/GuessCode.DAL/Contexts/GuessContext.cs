@@ -6,8 +6,6 @@ public class GuessContext : DbContext
 {
     public GuessContext(DbContextOptions<GuessContext> options) : base(options)
     {
-        //TODO: сделать инициализатор
-        //Database.EnsureCreated();
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

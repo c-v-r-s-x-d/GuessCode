@@ -26,7 +26,7 @@ public class MentoringController : BaseGuessController
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpPost]
     public async Task<List<MentorDto>> GetMentorsByFilter(List<ProgrammingLanguage> programmingLanguages, CancellationToken cancellationToken)
     {
         return _mapper.Map<List<MentorDto>>(

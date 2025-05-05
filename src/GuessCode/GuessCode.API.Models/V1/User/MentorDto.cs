@@ -5,6 +5,8 @@ namespace GuessCode.API.Models.V1.User;
 
 public class MentorDto
 {
+    public long? Id { get; set; }
+    
     public long UserId { get; set; }
     
     public long Experience { get; set; }

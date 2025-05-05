@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using AutoMapper;
 using GuessCode.API.Models.V1.Kata;
 using GuessCode.DAL.Models.KataAggregate;
@@ -24,8 +25,20 @@ public class KataAdministrationController : BaseGuessController
     }
 
     [HttpPost]
-    public async Task CreateKata([FromBody] KataDto kataDto, IFormFile? file, CancellationToken cancellationToken)
+    [Consumes("multipart/form-data")]
+    [Authorize(Roles = $"{RoleNameConstants.Admin}, {RoleNameConstants.User}")]
+    public async Task CreateKata([FromForm] string kataDtoRaw, IFormFile? file, CancellationToken cancellationToken)
     {
+        KataDto kataDto;
+        try
+        {
+            kataDto = JsonSerializer.Deserialize<KataDto>(kataDtoRaw)!;
+        }
+        catch
+        {
+            throw new ValidationException("Invalid KataDto format");
+        }
+        
         byte[]? testFile = null;
         if (file is { Length: > 0 })
         {
@@ -42,7 +55,7 @@ public class KataAdministrationController : BaseGuessController
         }
         
         var kata = _mapper.Map<Kata>(kataDto);
-        await _kataAdministrationService.CreateKata(UserId, kata, testFile, cancellationToken);
+        await _kataAdministrationService.ApplyKataForCreation(UserId, kata, testFile, cancellationToken);
     }
 
     [HttpPut]
@@ -56,5 +69,17 @@ public class KataAdministrationController : BaseGuessController
     public async Task DeleteKata([FromQuery] long kataId, CancellationToken cancellationToken)
     {
         await _kataAdministrationService.DeleteKata(UserId, kataId, cancellationToken);
+    }
+
+    [HttpGet("pending-katas")]
+    public async Task<List<KataDto>> GetPendingKatas(CancellationToken cancellationToken)
+    {
+        return _mapper.Map<List<KataDto>>(await _kataAdministrationService.GetPendingKatas(cancellationToken));
+    }
+
+    [HttpPost("pending-katas")]
+    public async Task ConsiderPendingKata(long kataId, bool isApproved, CancellationToken cancellationToken)
+    {
+        await _kataAdministrationService.ConsiderPendingKata(kataId, isApproved, cancellationToken);
     }
 }

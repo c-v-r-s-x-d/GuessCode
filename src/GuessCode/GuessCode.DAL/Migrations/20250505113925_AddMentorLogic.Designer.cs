@@ -5,6 +5,7 @@ using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GuessCode.DAL.Migrations
 {
     [DbContext(typeof(GuessContext))]
-    partial class GuessContextModelSnapshot : ModelSnapshot
+    [Migration("20250505113925_AddMentorLogic")]
+    partial class AddMentorLogic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,10 +199,12 @@ namespace GuessCode.DAL.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("UserId1")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Mentor", null, t =>
                         {
@@ -392,10 +397,8 @@ namespace GuessCode.DAL.Migrations
             modelBuilder.Entity("GuessCode.DAL.Models.UserAggregate.Mentor", b =>
                 {
                     b.HasOne("GuessCode.DAL.Models.UserAggregate.User", "User")
-                        .WithOne("Mentor")
-                        .HasForeignKey("GuessCode.DAL.Models.UserAggregate.Mentor", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("User");
                 });
@@ -432,13 +435,15 @@ namespace GuessCode.DAL.Migrations
 
             modelBuilder.Entity("GuessCode.DAL.Models.UserAggregate.User", b =>
                 {
-                    b.HasOne("GuessCode.DAL.Models.UserAggregate.Mentor", null)
+                    b.HasOne("GuessCode.DAL.Models.UserAggregate.Mentor", "Mentor")
                         .WithMany("Mentees")
                         .HasForeignKey("MentorId");
 
                     b.HasOne("GuessCode.DAL.Models.RoleAggregate.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
+
+                    b.Navigation("Mentor");
 
                     b.Navigation("Role");
                 });
@@ -489,8 +494,6 @@ namespace GuessCode.DAL.Migrations
                     b.Navigation("AuthoredKatas");
 
                     b.Navigation("GitHubProfile");
-
-                    b.Navigation("Mentor");
 
                     b.Navigation("RatingChanges");
 

@@ -20,6 +20,7 @@ public class RatingService : IRatingService
     {
         var user = await _context
                        .Set<User>()
+                       .Include(x => x.RatingChanges)
                        .SingleOrDefaultAsync(x => x.Id == ratingChange.UserId) ??
                    throw new ValidationException($"User {ratingChange.UserId} not found");
         

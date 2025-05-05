@@ -5,6 +5,7 @@ using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GuessCode.DAL.Migrations
 {
     [DbContext(typeof(GuessContext))]
-    partial class GuessContextModelSnapshot : ModelSnapshot
+    [Migration("20250506093441_FixMentorLogic")]
+    partial class FixMentorLogic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

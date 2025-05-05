@@ -21,7 +21,7 @@ public class FindMentorService : IFindMentorService
     {
         return await _context
             .Set<Mentor>()
-            .Where(x => x.ProgrammingLanguages.Any(programmingLanguages.Contains) && x.IsApproved)
+            .Where(x => x.ProgrammingLanguages.Any(y => programmingLanguages.Contains(y)) && x.IsApproved)
             .ToListAsync(cancellationToken);
     }
 

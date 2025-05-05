@@ -45,7 +45,7 @@ public class ProfileInfoService : IProfileInfoService
         
         var fileId = await _fileUploaderService.UploadFile(avatar, fileExtension, true, cancellationToken);
         
-        userInfo.AvatarUrl = fileId.ToString();
+        userInfo.AvatarUrl = $"{fileId}{fileExtension}";
         await _context.SaveChangesAsync(cancellationToken);
     }
 

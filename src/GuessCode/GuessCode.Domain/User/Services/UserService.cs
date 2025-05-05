@@ -15,6 +15,14 @@ public class UserService : IUserService
         _context = context;
     }
 
+    public async Task<List<User>> GetAllUsers(CancellationToken cancellationToken)
+    {
+        return await _context
+            .Set<User>()
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<User> GetUserById(long userId, CancellationToken cancellationToken)
     {
         return (await _context

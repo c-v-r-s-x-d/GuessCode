@@ -13,6 +13,9 @@ public static class PrimaryConfiguration
         builder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            c.SupportNonNullableReferenceTypes();
+            c.UseAllOfToExtendReferenceSchemas();
+            c.UseAllOfForInheritance();
         });
         builder.Services.AddProblemDetails();
         builder.Services.AddExceptionHandler<ApiExceptionHandler>();

@@ -51,5 +51,8 @@ public class AutoMapperConfig : Profile
             .ReverseMap();
         CreateMap<LeaderboardPositionDto, LeaderboardPosition>()
             .ReverseMap();
+        
+        CreateMap<MentorDto, Mentor>()
+            .ReverseMap();
     }
 }

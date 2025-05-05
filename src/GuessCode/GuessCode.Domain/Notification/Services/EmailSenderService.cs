@@ -24,6 +24,8 @@ public class EmailSenderService : IEmailSenderService
     {
         var notificationSubject = _configuration[$"Emails:{notificationType}:Subject"]!;
         var notificationContent = _configuration[$"Emails:{notificationType}:Content"]!;
+        Console.WriteLine($"Notification Type - {notificationType}");
+        Console.WriteLine($"Notification Content - {notificationContent}");
         
         var smtpClient = CreateSmtpClient();
 

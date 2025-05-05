@@ -30,6 +30,8 @@ public static class BusinessLogicConfiguration
         builder.Services.AddScoped<IGitHubLoginService, GitHubLoginService>();
         builder.Services.AddScoped<IRatingService, RatingService>();
         builder.Services.AddScoped<IFileUploaderService, FileUploaderService>();
+        builder.Services.AddScoped<IMentorshipService, MentorshipService>();
+        builder.Services.AddScoped<IFindMentorService, FindMentorService>();
         builder.Services.AddScoped<IHttpService, HttpService>();
 
         builder.Services.AddScoped<CodeQueueService>();

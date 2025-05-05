@@ -8,5 +8,6 @@ public static class SettingsConfiguration
     {
         builder.Services.Configure<CredentialSettings>(builder.Configuration.GetSection("CredentialSettings"));
         builder.Services.Configure<CodeExecutionSettings>(builder.Configuration.GetSection("CodeExecutionSettings"));
+        builder.Services.Configure<AISettings>(builder.Configuration.GetSection("AISettings"));
     }
 }

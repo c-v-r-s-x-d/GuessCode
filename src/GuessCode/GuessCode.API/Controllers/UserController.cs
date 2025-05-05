@@ -26,5 +26,13 @@ public class UserController : BaseGuessController
     {
         return _mapper.Map<UserDto>(await _userService.GetUserById(userId, cancellationToken));
     }
+
+    [HttpGet("all")]
+    [Authorize(Roles = $"{RoleNameConstants.Admin}")]
+    public async Task<List<UserDto>> GetAllUsers(CancellationToken cancellationToken)
+    {
+        return _mapper.Map<List<UserDto>>(await _userService.GetAllUsers(cancellationToken));
+    }
+    
     
 }

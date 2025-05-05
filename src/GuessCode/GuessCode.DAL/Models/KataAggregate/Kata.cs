@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using GuessCode.DAL.Models.BaseModels;
 using GuessCode.DAL.Models.Enums;
 using GuessCode.DAL.Models.UserAggregate;
-using Newtonsoft.Json;
 
 namespace GuessCode.DAL.Models.KataAggregate;
 
@@ -23,6 +24,8 @@ public class Kata : BaseEntity<long>
     public Dictionary<ProgrammingLanguage, decimal> MemoryLimits { get; set; }
     
     public Dictionary<ProgrammingLanguage, decimal> TimeLimits { get; set; }
+    
+    public bool IsApproved { get; set; }
 
     [JsonIgnore]
     public string KataRawJsonContent { get; set; }
@@ -32,9 +35,10 @@ public class Kata : BaseEntity<long>
     {
         get => string.IsNullOrEmpty(KataRawJsonContent)
             ? new KataJsonContent()
-            : JsonConvert.DeserializeObject<KataJsonContent>(KataRawJsonContent) ?? new KataJsonContent();
+            : JsonSerializer.Deserialize<KataJsonContent>(KataRawJsonContent,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new KataJsonContent();
 
-        set => KataRawJsonContent = JsonConvert.SerializeObject(value);
+        set => KataRawJsonContent = JsonSerializer.Serialize(value);
     }
 
     public long AuthorId { get; set; }
@@ -43,14 +47,14 @@ public class Kata : BaseEntity<long>
 
 public class KataJsonContent
 {
-    [JsonProperty("kata_description")]
+    [JsonPropertyName("kataDescription")]
     public string KataDescription { get; set; }
 
-    [JsonProperty("source_code")]
+    [JsonPropertyName("sourceCode")]
     public string SourceCode { get; set; }
 
-    [JsonProperty("answer_options")]
-    public List<AnswerOption> AnswerOptions { get; set; } = new();
+    [JsonPropertyName("answerOptions")]
+    public List<AnswerOption> AnswerOptions { get; set; }
 
     public List<AnswerOption> GetPublicAnswerOptions()
     {
@@ -64,12 +68,12 @@ public class KataJsonContent
 
 public class AnswerOption
 {
-    [JsonProperty("option_id")]
+    [JsonPropertyName("optionId")]
     public int OptionId { get; set; }
 
-    [JsonProperty("option")]
+    [JsonPropertyName("option")]
     public string Option { get; set; }
 
-    [JsonProperty("is_correct")]
+    [JsonPropertyName("isCorrect")]
     public bool IsCorrect { get; set; }
 }
