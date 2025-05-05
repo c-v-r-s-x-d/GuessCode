@@ -19,6 +19,10 @@ public class Kata : BaseEntity<long>
     public List<KataCodeExecutionResult> KataCodeExecutionResults { get; set; }
     
     public int PointsReward { get; set; }
+    
+    public Dictionary<ProgrammingLanguage, decimal> MemoryLimits { get; set; }
+    
+    public Dictionary<ProgrammingLanguage, decimal> TimeLimits { get; set; }
 
     [JsonIgnore]
     public string KataRawJsonContent { get; set; }

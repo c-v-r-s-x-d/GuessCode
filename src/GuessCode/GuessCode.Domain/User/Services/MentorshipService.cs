@@ -1,0 +1,140 @@
+using System.ComponentModel.DataAnnotations;
+using GuessCode.DAL.Commands;
+using GuessCode.DAL.Contexts;
+using GuessCode.DAL.Models.UserAggregate;
+using GuessCode.Domain.Contracts;
+using GuessCode.Domain.Utils;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using StackExchange.Redis;
+
+namespace GuessCode.Domain.Services;
+
+public class MentorshipService : IMentorshipService
+{
+    private readonly GuessContext _context;
+    private readonly IConnectionMultiplexer _redis;
+
+    public MentorshipService(GuessContext context, IConnectionMultiplexer redis)
+    {
+        _context = context;
+        _redis = redis;
+    }
+
+    public async Task ApplyForMentorship(Mentor mentor, CancellationToken cancellationToken)
+    {
+        var isAlreadyMentor = await _context
+            .Set<Mentor>()
+            .AnyAsync(x => x.Id == mentor.Id, cancellationToken);
+
+        if (isAlreadyMentor)
+        {
+            throw new ValidationException($"User {mentor.Id} is already a mentor or applied for mentor");
+        }
+
+        mentor.IsApproved = false;
+        await _context.AddAsync(mentor, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<List<Mentor>> GetPendingMentors(CancellationToken cancellationToken)
+    {
+        return await _context
+            .Set<Mentor>()
+            .AsNoTracking()
+            .Where(x => !x.IsApproved)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task ConsiderPendingMentor(long mentorId, bool isApproved, CancellationToken cancellationToken)
+    {
+        var mentorUserId = await _context
+            .Set<Mentor>()
+            .AsNoTracking()
+            .Select(x => x.UserId)
+            .SingleAsync(cancellationToken);
+        
+        if (isApproved)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            
+            await _context
+                .Set<Mentor>()
+                .Where(x => x.Id == mentorId)
+                .ExecuteUpdateAsync(x => x.SetProperty(m => m.IsApproved, true), cancellationToken);
+            await CreateApprovedNotification(mentorUserId, cancellationToken);
+            
+            await transaction.CommitAsync(cancellationToken);
+        }
+        else
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+            await _context
+                .Set<Mentor>()
+                .Where(x => x.Id == mentorId)
+                .ExecuteDeleteAsync(cancellationToken);
+            await CreateRejectedNotification(mentorUserId, cancellationToken);
+            
+            await transaction.CommitAsync(cancellationToken);
+        }
+    }
+
+    private async Task CreateRejectedNotification(long userId, CancellationToken cancellationToken)
+    {
+        var (mentorUsername, mentorEmail) = await GetUsernameAndEmailById(userId, cancellationToken);
+        
+        var emailCommand = new SendApprovedMentorshipEmailCommand()
+        {
+            ReceiverEmail = mentorEmail,
+            Username = mentorUsername
+        };
+
+        var redisDatabase = _redis.GetDatabase();
+
+        var existingData = await redisDatabase.StringGetAsync(nameof(SendApprovedMentorshipEmailCommand));
+        var currentEmailCommand = string.IsNullOrEmpty(existingData)
+            ? new SendApprovedMentorshipEmailCommand[] { }  
+            : JsonConvert.DeserializeObject<SendApprovedMentorshipEmailCommand[]>(existingData!);
+
+        var updatedData = JsonConvert.SerializeObject(ArrayUtils.AddToArray(currentEmailCommand!, emailCommand));
+        await redisDatabase.StringSetAsync(nameof(SendApprovedMentorshipEmailCommand), updatedData);
+    }
+
+    private async Task CreateApprovedNotification(long userId, CancellationToken cancellationToken)
+    {
+        var (mentorUsername, mentorEmail) = await GetUsernameAndEmailById(userId, cancellationToken);
+        
+        var emailCommand = new SendRejectedMentorshipEmailCommand()
+        {
+            ReceiverEmail = mentorEmail,
+            Username = mentorUsername
+        };
+
+        var redisDatabase = _redis.GetDatabase();
+
+        var existingData = await redisDatabase.StringGetAsync(nameof(SendRejectedMentorshipEmailCommand));
+        var currentEmailCommand = string.IsNullOrEmpty(existingData)
+            ? new SendRejectedMentorshipEmailCommand[] { }  
+            : JsonConvert.DeserializeObject<SendRejectedMentorshipEmailCommand[]>(existingData!);
+
+        var updatedData = JsonConvert.SerializeObject(ArrayUtils.AddToArray(currentEmailCommand!, emailCommand));
+        await redisDatabase.StringSetAsync(nameof(SendRejectedMentorshipEmailCommand), updatedData);
+    }
+
+    private async Task<(string Username, string Email)> GetUsernameAndEmailById(long userId, CancellationToken cancellationToken)
+    {
+        var result = await _context
+            .Set<User>()
+            .AsNoTracking()
+            .Where(x => x.Id == userId)
+            .Select(x => new
+            {
+                x.Username,
+                x.Email
+            })
+            .SingleAsync(cancellationToken);
+
+        return (result.Username, result.Email);
+    }
+}

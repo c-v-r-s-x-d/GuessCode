@@ -22,16 +22,24 @@ public class ProcessPendingNotificationsCommandHandler : IRequestHandler<Process
     {
         var database = _redis.GetDatabase();
 
-        var sendRequest = await database.StringGetAsync(nameof(SendWelcomeEmailCommand));
+        var welcomeRequest = await database.StringGetAsync(nameof(SendWelcomeEmailCommand));
+        var rejectedRequest = await database.StringGetAsync(nameof(SendRejectedMentorshipEmailCommand));
+        var approvedRequest = await database.StringGetAsync(nameof(SendApprovedMentorshipEmailCommand));
 
-        if (sendRequest.IsNullOrEmpty)
+        await SendEmailWithUsername<SendWelcomeEmailCommand>(welcomeRequest);
+        await SendEmailWithUsername<SendRejectedMentorshipEmailCommand>(rejectedRequest);
+        await SendEmailWithUsername<SendApprovedMentorshipEmailCommand>(approvedRequest);
+    }
+
+    private async ValueTask SendEmailWithUsername<T>(RedisValue value) where T : BaseEmail, IRequest
+    {
+        if (value.IsNullOrEmpty)
         {
             return;
         }
-        
-        var welcomeRequests = JsonConvert.DeserializeObject<SendWelcomeEmailCommand[]>(sendRequest!)!;
 
-        await _emailSenderService.SendEmailNotifications(nameof(SendWelcomeEmailCommand),
-            welcomeRequests.ToDictionary(x => x.ReceiverEmail, x => new object[] { x.Username }));
+        var requests = JsonConvert.DeserializeObject<T[]>(value!);
+        await _emailSenderService.SendEmailNotifications(nameof(T),
+            requests!.ToDictionary(x => x.ReceiverEmail, x => new object[] { x.Username }));
     }
 }

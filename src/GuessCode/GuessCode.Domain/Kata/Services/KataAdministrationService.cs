@@ -2,25 +2,47 @@
 using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.KataAggregate;
 using GuessCode.Domain.Contracts;
+using GuessCode.Domain.File.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace GuessCode.Domain.Services;
 
 public class KataAdministrationService : IKataAdministrationService
 {
+    private const string TestFileExtension = ".txt";
+    
     private readonly GuessContext _context;
+    private readonly IFileUploaderService _fileUploaderService;
 
-    public KataAdministrationService(GuessContext context)
+    public KataAdministrationService(GuessContext context, IFileUploaderService fileUploaderService)
     {
         _context = context;
+        _fileUploaderService = fileUploaderService;
     }
 
-    public async Task CreateKata(long userId, Kata kata, CancellationToken cancellationToken)
+    public async Task CreateKata(long userId, Kata kata, byte[]? testFile, CancellationToken cancellationToken)
     {
         EnsureUserIsAuthor(userId, kata.AuthorId);
 
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+        Guid? fileId = null;
+        if (testFile is not null)
+        {
+            fileId = await _fileUploaderService.UploadFile(testFile, TestFileExtension, false, cancellationToken);
+        }
+
         await _context.AddAsync(kata, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+
+        if (fileId is not null)
+        {
+            await _context.AddAsync(new KataTestFile
+            {
+                KataId = kata.Id,
+                FileName = fileId.Value.ToString()
+            }, cancellationToken);
+        }
     }
 
     public async Task EditKata(long userId, Kata kata, CancellationToken cancellationToken)

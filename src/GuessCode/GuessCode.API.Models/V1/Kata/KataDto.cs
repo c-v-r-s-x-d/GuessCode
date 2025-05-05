@@ -19,5 +19,9 @@ public class KataDto
 
     public long AuthorId { get; set; }
     
+    public Dictionary<ProgrammingLanguage, decimal>? MemoryLimits { get; set; }
+    
+    public Dictionary<ProgrammingLanguage, decimal>? TimeLimits { get; set; }
+    
     public bool IsKataResolved { get; set; }
 }

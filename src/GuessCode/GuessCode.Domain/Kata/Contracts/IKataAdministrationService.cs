@@ -4,7 +4,7 @@ namespace GuessCode.Domain.Contracts;
 
 public interface IKataAdministrationService
 {
-    Task CreateKata(long userId, Kata kata, CancellationToken cancellationToken);
+    Task CreateKata(long userId, Kata kata, byte[]? testFile, CancellationToken cancellationToken);
 
     Task EditKata(long userId, Kata kata, CancellationToken cancellationToken);
 

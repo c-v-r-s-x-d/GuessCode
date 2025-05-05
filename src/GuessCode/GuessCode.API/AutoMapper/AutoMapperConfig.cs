@@ -7,6 +7,7 @@ using GuessCode.DAL.Models.KataAggregate;
 using GuessCode.DAL.Models.UserAggregate;
 using GuessCode.Domain.Auth.Models;
 using GuessCode.Domain.Models;
+using GuessCode.Domain.Utils;
 using Newtonsoft.Json;
 
 namespace GuessCode.API.AutoMapper;
@@ -33,7 +34,9 @@ public class AutoMapperConfig : Profile
 
         CreateMap<KataDto, Kata>()
             .ForMember(dest => dest.KataRawJsonContent, opt => opt.MapFrom(src =>
-                JsonConvert.SerializeObject(src.KataJsonContent)));
+                JsonConvert.SerializeObject(src.KataJsonContent)))
+            .ForMember(dest => dest.PointsReward,
+                opt => opt.MapFrom(src => RankUtils.GetKataDifficultyRewardPoints(src.KataDifficulty)));
 
         
         CreateMap<KataCodeReadingAnswerDto, KataCodeReadingAnswer>()

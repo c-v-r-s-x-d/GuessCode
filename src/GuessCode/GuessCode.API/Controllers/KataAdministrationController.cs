@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using GuessCode.API.Models.V1.Kata;
 using GuessCode.DAL.Models.KataAggregate;
 using GuessCode.DAL.Models.RoleAggregate;
@@ -23,10 +24,25 @@ public class KataAdministrationController : BaseGuessController
     }
 
     [HttpPost]
-    public async Task CreateKata([FromBody] KataDto kataDto, CancellationToken cancellationToken)
+    public async Task CreateKata([FromBody] KataDto kataDto, IFormFile? file, CancellationToken cancellationToken)
     {
+        byte[]? testFile = null;
+        if (file is { Length: > 0 })
+        {
+            using var memoryStream = new MemoryStream();
+            var fileExtension = Path.GetExtension(file.FileName);
+
+            if (fileExtension != ".txt")
+            {
+                throw new ValidationException("File extension must be .txt");
+            }
+            
+            await file.CopyToAsync(memoryStream, cancellationToken);
+            testFile = memoryStream.ToArray();
+        }
+        
         var kata = _mapper.Map<Kata>(kataDto);
-        await _kataAdministrationService.CreateKata(UserId, kata, cancellationToken);
+        await _kataAdministrationService.CreateKata(UserId, kata, testFile, cancellationToken);
     }
 
     [HttpPut]
