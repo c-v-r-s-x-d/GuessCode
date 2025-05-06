@@ -32,6 +32,7 @@ public static class BusinessLogicConfiguration
         builder.Services.AddScoped<IFileUploaderService, FileUploaderService>();
         builder.Services.AddScoped<IMentorshipService, MentorshipService>();
         builder.Services.AddScoped<IFindMentorService, FindMentorService>();
+        builder.Services.AddScoped<IChatService, ChatService>();
         builder.Services.AddScoped<IHttpService, HttpService>();
 
         builder.Services.AddScoped<CodeQueueService>();

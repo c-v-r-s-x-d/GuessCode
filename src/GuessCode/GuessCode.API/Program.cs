@@ -31,6 +31,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
     endpoints.MapHub<UserStatusHub>("/status-hub");
+    endpoints.MapHub<ChatHub>("/chat-hub");
 });
 
 app.ApplyDatabaseMigrations();
