@@ -81,6 +81,25 @@ public class MentorshipService : IMentorshipService
         }
     }
 
+    public async Task<List<User>> GetMentees(long userId, CancellationToken cancellationToken)
+    {
+        var isUserMentor = await _context
+            .Set<Mentor>()
+            .AnyAsync(x => x.UserId == userId, cancellationToken);
+
+        if (!isUserMentor)
+        {
+            throw new ValidationException($"User {userId} is not a mentor");
+        }
+        
+        return await _context
+            .Set<Mentor>()
+            .AsNoTracking()
+            .Where(x => x.UserId == userId)
+            .SelectMany(x => x.Mentees)
+            .ToListAsync(cancellationToken);
+    }
+
     private async Task CreateRejectedNotification(long userId, CancellationToken cancellationToken)
     {
         var (mentorUsername, mentorEmail) = await GetUsernameAndEmailById(userId, cancellationToken);

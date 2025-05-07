@@ -58,4 +58,10 @@ public class MentoringController : BaseGuessController
     {
         await _mentorshipService.ConsiderPendingMentor(mentorId, isApproved, cancellationToken);
     }
+
+    [HttpGet("mentees")]
+    public async Task<List<UserDto>> GetMentees(CancellationToken cancellationToken)
+    {
+        return _mapper.Map<List<UserDto>>(await _mentorshipService.GetMentees(UserId, cancellationToken));
+    }
 }

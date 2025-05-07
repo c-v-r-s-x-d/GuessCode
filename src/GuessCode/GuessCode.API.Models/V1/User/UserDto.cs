@@ -21,4 +21,6 @@ public class UserDto
     public long? UserProfileId { get; set; }
 
     public long? RoleId { get; set; }
+    
+    public long? MentorId { get; set; }
 }
