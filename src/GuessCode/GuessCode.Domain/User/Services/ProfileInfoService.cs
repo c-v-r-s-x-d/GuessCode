@@ -24,7 +24,7 @@ public class ProfileInfoService : IProfileInfoService
         var user = await _context
                        .Set<User>()
                        .AsNoTracking()
-                       .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken) ??
+                       .SingleOrDefaultAsync(x => x.Id != SystemUserIds.System && x.Id == userId, cancellationToken) ??
                    throw new ValidationException($"Profile for user {userId} not found");
         
         var userProfile = await _context

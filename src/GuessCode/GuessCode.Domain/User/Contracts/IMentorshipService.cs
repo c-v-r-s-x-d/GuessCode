@@ -11,4 +11,10 @@ public interface IMentorshipService
     Task ConsiderPendingMentor(long mentorId, bool isApproved, CancellationToken cancellationToken);
     
     Task<List<User>> GetMentees(long userId, CancellationToken cancellationToken);
+    
+    Task<List<User>> GetPendingMentees(long userId, CancellationToken cancellationToken);
+    
+    Task ConsiderPendingMentee(long userId, long menteeId, bool isApproved, CancellationToken cancellationToken);
+    
+    Task<Mentor?> GetMentorById(long mentorId, CancellationToken cancellationToken);
 }

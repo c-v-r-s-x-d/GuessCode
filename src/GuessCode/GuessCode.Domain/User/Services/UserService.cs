@@ -19,6 +19,7 @@ public class UserService : IUserService
     {
         return await _context
             .Set<User>()
+            .Where(x => x.Id != SystemUserIds.System)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -27,6 +28,7 @@ public class UserService : IUserService
     {
         return (await _context
                    .Set<User>()
+                   .Where(x => x.Id != SystemUserIds.System)
                    .AsNoTracking()
                    .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken)) ??
                throw new ValidationException($"User {userId} not found");

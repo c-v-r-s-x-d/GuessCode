@@ -21,6 +21,7 @@ public class LeaderboardService : ILeaderboardService
         var leaderboard = await _context
             .Set<User>()
             .AsNoTracking()
+            .Where(x => x.Id != SystemUserIds.System)
             .OrderByDescending(x => x.Rating)
             .Take(LeaderboardPositionsCount)
             .Select(x => new LeaderboardPosition

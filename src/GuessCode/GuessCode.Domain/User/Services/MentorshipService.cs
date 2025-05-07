@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using GuessCode.DAL.Commands;
 using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.UserAggregate;
+using GuessCode.DAL.Models.UserAggregate.Enums;
 using GuessCode.Domain.Contracts;
 using GuessCode.Domain.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -83,21 +84,64 @@ public class MentorshipService : IMentorshipService
 
     public async Task<List<User>> GetMentees(long userId, CancellationToken cancellationToken)
     {
-        var isUserMentor = await _context
-            .Set<Mentor>()
-            .AnyAsync(x => x.UserId == userId, cancellationToken);
-
-        if (!isUserMentor)
-        {
-            throw new ValidationException($"User {userId} is not a mentor");
-        }
-        
         return await _context
             .Set<Mentor>()
             .AsNoTracking()
             .Where(x => x.UserId == userId)
             .SelectMany(x => x.Mentees)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<User>> GetPendingMentees(long userId, CancellationToken cancellationToken)
+    {
+        return await _context
+            .Set<MentorRequest>()
+            .Where(x => x.Mentor.UserId == userId && x.Status == MentorRequestStatus.Sent)
+            .Select(x => x.User)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task ConsiderPendingMentee(long userId, long menteeId, bool isApproved, CancellationToken cancellationToken)
+    {
+        var checkMentorRequestExists = await _context
+            .Set<MentorRequest>()
+            .AnyAsync(x => x.Mentor.UserId == userId && x.UserId == menteeId, cancellationToken);
+        
+        var mentorId = await _context
+            .Set<Mentor>()
+            .Where(x => x.UserId == userId)
+            .Select(x => x.Id)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (!checkMentorRequestExists)
+        {
+            throw new ValidationException($"There is not request for mentor {userId} and mentee {menteeId}");
+        }
+
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+        
+        var newStatus = isApproved ? MentorRequestStatus.Accepted : MentorRequestStatus.Declined;
+        await _context
+            .Set<MentorRequest>()
+            .Where(x => x.Mentor.UserId == userId && x.UserId == menteeId)
+            .ExecuteUpdateAsync(x =>
+                x.SetProperty(y => y.Status, newStatus), cancellationToken);
+
+        await _context
+            .Set<User>()
+            .Where(x => x.Id == menteeId)
+            .ExecuteUpdateAsync(x => 
+                x.SetProperty(y => y.MentorId, mentorId), cancellationToken);
+        
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task<Mentor?> GetMentorById(long mentorId, CancellationToken cancellationToken)
+    {
+        return await _context
+            .Set<Mentor>()
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == mentorId, cancellationToken);
     }
 
     private async Task CreateRejectedNotification(long userId, CancellationToken cancellationToken)
