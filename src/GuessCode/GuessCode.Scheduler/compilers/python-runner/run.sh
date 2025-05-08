@@ -1,5 +1,5 @@
 #!/bin/bash
 
 # run.sh
-python3 /app/userdata/code.py < /app/userdata/input.txt
+timeout 5 python3 /app/userdata/input/code.py
 

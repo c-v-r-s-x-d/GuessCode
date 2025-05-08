@@ -18,7 +18,11 @@ public class KataCodeExecutionResult : BaseEntity<Guid>
     
     public decimal TimeElapsed { get; set; }
     
+    public string SourceCode { get; set; }
+    
     public int TotalTestCount { get; set; }
+    
+    public DateTime ExecutedAt { get; set; } = DateTime.UtcNow;
     
     public int PassedTestCount { get; set; }
 }

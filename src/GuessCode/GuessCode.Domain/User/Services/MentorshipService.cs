@@ -159,13 +159,13 @@ public class MentorshipService : IMentorshipService
 
         var redisDatabase = _redis.GetDatabase();
 
-        var existingData = await redisDatabase.StringGetAsync(nameof(SendApprovedMentorshipEmailCommand));
+        var existingData = await redisDatabase.StringGetAsync(nameof(SendRejectedMentorshipEmailCommand));
         var currentEmailCommand = string.IsNullOrEmpty(existingData)
             ? new SendRejectedMentorshipEmailCommand[] { }  
             : JsonConvert.DeserializeObject<SendRejectedMentorshipEmailCommand[]>(existingData!);
 
         var updatedData = JsonConvert.SerializeObject(ArrayUtils.AddToArray(currentEmailCommand!, emailCommand));
-        await redisDatabase.StringSetAsync(nameof(SendApprovedMentorshipEmailCommand), updatedData);
+        await redisDatabase.StringSetAsync(nameof(SendRejectedMentorshipEmailCommand), updatedData);
     }
 
     private async Task CreateApprovedNotification(long userId, CancellationToken cancellationToken)
@@ -180,13 +180,13 @@ public class MentorshipService : IMentorshipService
 
         var redisDatabase = _redis.GetDatabase();
 
-        var existingData = await redisDatabase.StringGetAsync(nameof(SendRejectedMentorshipEmailCommand));
+        var existingData = await redisDatabase.StringGetAsync(nameof(SendApprovedMentorshipEmailCommand));
         var currentEmailCommand = string.IsNullOrEmpty(existingData)
             ? new SendApprovedMentorshipEmailCommand[] { }  
             : JsonConvert.DeserializeObject<SendApprovedMentorshipEmailCommand[]>(existingData!);
 
         var updatedData = JsonConvert.SerializeObject(ArrayUtils.AddToArray(currentEmailCommand!, emailCommand));
-        await redisDatabase.StringSetAsync(nameof(SendRejectedMentorshipEmailCommand), updatedData);
+        await redisDatabase.StringSetAsync(nameof(SendApprovedMentorshipEmailCommand), updatedData);
     }
 
     private async Task<(string Username, string Email)> GetUsernameAndEmailById(long userId, CancellationToken cancellationToken)

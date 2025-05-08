@@ -11,12 +11,11 @@ public class Program
     {
         var lines = File.ReadAllLines("/app/userdata/input/input.txt").ToList();
         int testCount = int.Parse(lines[1]);
-        string funcName = lines[2];
 
         var inputs = new List<string>();
         var outputs = new List<string>();
 
-        for (int i = 3; i < lines.Count; i++)
+        for (int i = 4; i < lines.Count; i++)
         {
             if (lines[i] == "---INPUT---")
                 inputs.Add(lines[++i]);
@@ -28,7 +27,7 @@ public class Program
 
         for (int i = 0; i < testCount; i++)
         {
-            var args = inputs[i].Split().Select(s => int.Parse(s.Trim())).ToArray();
+            var args = Array.ConvertAll(inputs[i].Split(), s => int.Parse(s.Trim()));
             var expected = outputs[i];
 
             var sw = Stopwatch.StartNew();
@@ -36,8 +35,8 @@ public class Program
             sw.Stop();
 
             string status = string.Equals(result.ToString(), expected) ? "PASSED" : "FAILED";
-            writer.WriteLine($"{i + 1} {status} TIME:{sw.ElapsedMilliseconds}ms MEMORY:16mb");
-            Console.WriteLine($"{i + 1} {status} TIME:{sw.ElapsedMilliseconds}ms MEMORY:16mb");
+            writer.WriteLine($"{i + 1} {status} {sw.ElapsedMilliseconds} MEMORY:16mb");
+            Console.WriteLine($"{i + 1} {status} {sw.ElapsedMilliseconds} MEMORY:16mb");
         }
     }
 }

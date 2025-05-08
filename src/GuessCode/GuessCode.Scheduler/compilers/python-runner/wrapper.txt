@@ -1,0 +1,38 @@
+import time
+
+{{USER_CODE}}
+
+def main():
+    with open("/app/userdata/input/input.txt") as f:
+        lines = f.readlines()
+
+    test_count = int(lines[1].strip())
+    func_name = lines[2].strip()
+
+    inputs = []
+    outputs = []
+
+    i = 4
+    while i < len(lines):
+        if lines[i].strip() == "---INPUT---":
+            inputs.append(lines[i + 1].strip())
+            i += 2
+        elif lines[i].strip() == "---OUTPUT---":
+            outputs.append(lines[i + 1].strip())
+            i += 2
+
+    with open("output.txt", "w") as writer:
+        for i in range(test_count):
+            args = list(map(int, inputs[i].split()))
+            expected = outputs[i]
+
+            start_time = time.time()
+            result = {{FUNC_NAME}}({{ALL_ARGS_HERE}})
+            elapsed_time = (time.time() - start_time) * 1000  # milliseconds
+
+            status = "PASSED" if str(result) == expected else "FAILED"
+            writer.write(f"{i + 1} {status} {int(elapsed_time)} MEMORY:16mb\n")
+            print(f"{i + 1} {status} {int(elapsed_time)} MEMORY:16mb")
+
+if __name__ == "__main__":
+    main()

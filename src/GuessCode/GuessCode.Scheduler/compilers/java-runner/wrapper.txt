@@ -1,0 +1,44 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get("/app/userdata/input/input.txt"));
+        int testCount = Integer.parseInt(lines.get(1));
+        String funcName = lines.get(2);
+
+        List<String> inputs = new ArrayList<>();
+        List<String> outputs = new ArrayList<>();
+
+        for (int i = 3; i < lines.size(); i++) {
+            if ("---INPUT---".equals(lines.get(i))) {
+                inputs.add(lines.get(i + 1));
+                i += 2;
+            } else if ("---OUTPUT---".equals(lines.get(i))) {
+                outputs.add(lines.get(i + 1));
+                i += 2;
+            }
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))) {
+            for (int i = 0; i < testCount; i++) {
+                String[] argsArray = inputs.get(i).split("\\s+");
+                String expected = outputs.get(i);
+
+                long startTime = System.currentTimeMillis();
+                
+                // Вставка вызова функции с аргументами
+                String result = {{FUNC_NAME}}({{ALL_ARGS_HERE}});
+
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                String status = result.equals(expected) ? "PASSED" : "FAILED";
+
+                writer.write((i + 1) + " " + status + " " + elapsedTime + " MEMORY:16mb");
+                writer.newLine();
+                System.out.println((i + 1) + " " + status + " " + elapsedTime + " MEMORY:16mb");
+            }
+        }
+    }
+
+    {{USERCODE}}
+}

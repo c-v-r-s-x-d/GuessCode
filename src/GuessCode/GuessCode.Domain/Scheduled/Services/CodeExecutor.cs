@@ -170,11 +170,16 @@ public class CodeExecutor
         var templateFile = GetTemplateFileContent(directory);
         var testFile = GetTestFileContent(testFileId);
         
+        var lines = testFile.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+        
+        var functionName = lines[2].Trim();
+        var argumentCount = int.Parse(lines[3]);
+            
         var executableFile = templateFile
             .Replace(UserCodeReplaceKey, userCode)
-            .Replace(FuncNameReplaceKey, "Foo")
-            .Replace(ArgsReplaceKey, "args[0], args[1]");
-        
+            .Replace(FuncNameReplaceKey, functionName)
+            .Replace(ArgsReplaceKey, string.Join(", ", Enumerable.Range(0, argumentCount).Select(x => $"args[{x}]")));
+            
         return executableFile;
     }
 

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.Enums;
 using GuessCode.DAL.Models.KataAggregate;
+using GuessCode.DAL.Models.UserAggregate;
 using GuessCode.Domain.Contracts;
 using GuessCode.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,16 @@ public class KataBugFindingSolveService : IKataBugFindingSolveService
         if (kata.KataType is not KataType.BugFinding)
         {
             throw new ValidationException($"This solve service is only for KataType {KataType.BugFinding}");
+        }
+
+        var checkUserAlreadyResolveKata = await _context
+            .Set<User>()
+            .Where(x => x.Id == userId && x.ResolvedKatas.Select(y => y.Id).Contains(kata.Id))
+            .AnyAsync(cancellationToken);
+
+        if (checkUserAlreadyResolveKata)
+        {
+            throw new ValidationException("User already resolve Kata");
         }
 
         await _kataCodeExecutionService.ScheduleCodeExecution(userId, kataCodeReadingAnswer.KataId,

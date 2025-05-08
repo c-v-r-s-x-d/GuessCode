@@ -130,7 +130,7 @@ public class KataAdministrationService : IKataAdministrationService
         }
     }
     
-    private async Task CreateRejectedNotification(long userId, CancellationToken cancellationToken)
+    private async Task CreateApprovedNotification(long userId, CancellationToken cancellationToken)
     {
         var (mentorUsername, mentorEmail) = await GetUsernameAndEmailById(userId, cancellationToken);
         
@@ -151,7 +151,7 @@ public class KataAdministrationService : IKataAdministrationService
         await redisDatabase.StringSetAsync(nameof(SendApprovedKataEmailCommand), updatedData);
     }
 
-    private async Task CreateApprovedNotification(long userId, CancellationToken cancellationToken)
+    private async Task CreateRejectedNotification(long userId, CancellationToken cancellationToken)
     {
         var (mentorUsername, mentorEmail) = await GetUsernameAndEmailById(userId, cancellationToken);
         

@@ -35,4 +35,17 @@ public class KataSearchController : BaseGuessController
         return _mapper.Map<IReadOnlyCollection<KataDto>>(await _kataSearchService
             .Search(kataDifficulty, kataLanguage, kataType, cancellationToken));
     }
+
+    [HttpGet("resolved")]
+    public async Task<List<long>> GetResolvedKataIds(CancellationToken cancellationToken)
+    {
+        return await _kataSearchService.GetUserResolvedKataIds(UserId, cancellationToken);
+    }
+
+    [HttpGet("resolved/{kataId}")]
+    public async Task<ResolvedKataDto> GetResolvedKataInfo(long kataId, CancellationToken cancellationToken)
+    {
+        return _mapper.Map<ResolvedKataDto>(
+            await _kataSearchService.GetResolvedKataCodeExecutionResult(UserId, kataId, cancellationToken));
+    }
 }

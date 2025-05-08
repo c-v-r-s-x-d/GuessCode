@@ -2,6 +2,7 @@
 using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.Enums;
 using GuessCode.DAL.Models.KataAggregate;
+using GuessCode.DAL.Models.UserAggregate;
 using GuessCode.Domain.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,5 +46,25 @@ public class KataSearchService : IKataSearchService
         }
 
         return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<long>> GetUserResolvedKataIds(long userId, CancellationToken cancellationToken)
+    {
+        return await _context
+            .Set<User>()
+            .AsNoTracking()
+            .Where(x => x.Id == userId)
+            .SelectMany(x => x.ResolvedKatas)
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<KataCodeExecutionResult?> GetResolvedKataCodeExecutionResult(long userId, long kataId, CancellationToken cancellationToken)
+    {
+        return await _context
+            .Set<KataCodeExecutionResult>()
+            .Where(x => x.KataId == kataId && x.ExecutedBy == userId)
+            .OrderByDescending(x => x.ExecutedAt)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

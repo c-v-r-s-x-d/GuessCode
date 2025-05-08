@@ -7,6 +7,7 @@ using GuessCode.Domain.Scheduled.Requests;
 using GuessCode.Domain.Scheduled.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GuessCode.Domain.Scheduled.Handlers;
 
@@ -34,13 +35,19 @@ public class ProcessNextCodeExecutionRequestCommandHandler : IRequestHandler<Pro
         var result = await _executor.ExecuteAsync(currentTask);
         Console.WriteLine($"Task {currentTask.Id} result:\n{result}");
 
+        var parsedResult = ParseExecutionResult(result);
+
         var codeExecutionResult = new KataCodeExecutionResult
         {
             ExecutedBy = currentTask.ExecutedBy,
             KataId = currentTask.KataId,
             Output = result,
-            TotalTestCount = 0,
-            PassedTestCount = 0
+            MemoryTaken = 0,
+            TimeElapsed = parsedResult.Max(x => x.TimeElapsed),
+            SourceCode = currentTask.SourceCode,
+            TotalTestCount = parsedResult.Count(x => x.Passed),
+            PassedTestCount = parsedResult.Count,
+
         };
 
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
@@ -70,5 +77,41 @@ public class ProcessNextCodeExecutionRequestCommandHandler : IRequestHandler<Pro
         await _context.SaveChangesAsync(cancellationToken);
         
         await transaction.CommitAsync(cancellationToken);
+    }
+
+    private static List<ExecutionResult> ParseExecutionResult(string rawResult)
+    {
+        var testResults = rawResult.Split('\n');
+        
+        var results = new List<ExecutionResult>();
+
+        foreach (var testResult in testResults)
+        {
+            if (testResult.IsNullOrEmpty())
+            {
+                continue;
+            }
+            var parts = testResult.Split();
+            results.Add(new ExecutionResult
+            {
+                TestNumber = int.Parse(parts[0]),
+                Passed = parts[1] == "PASSED",
+                TimeElapsed = decimal.Parse(parts[2]),
+                MemoryTaken = 0
+            });
+        }
+        
+        return results;
+    }
+    
+    private class ExecutionResult
+    {
+        public int TestNumber { get; set; }
+        
+        public bool Passed { get; set; }
+        
+        public decimal TimeElapsed { get; set; }
+        
+        public decimal MemoryTaken { get; set; }
     }
 }

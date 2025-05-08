@@ -54,5 +54,13 @@ public class AutoMapperConfig : Profile
         
         CreateMap<MentorDto, Mentor>()
             .ReverseMap();
+
+        CreateMap<KataCodeExecutionResult, ResolvedKataDto>()
+            .ForMember(dest => dest.KataId, opt => opt.MapFrom(src => src.KataId))
+            .ForMember(dest => dest.ExecutionOutput, opt => opt.MapFrom(src => src.Output))
+            .ForMember(dest => dest.SourceCode, opt => opt.MapFrom(src => src.SourceCode))
+            .ForMember(dest => dest.ResolvedUserId, opt => opt.MapFrom(src => src.ExecutedBy))
+            .ForMember(dest => dest.SelectedOptionId, opt => opt.Ignore())
+            .ForMember(dest => dest.PointEarned, opt => opt.Ignore());
     }
 }

@@ -1,0 +1,67 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <chrono>
+
+using namespace std;
+using namespace std::chrono;
+
+{{USER_CODE}}
+
+template<typename T>
+string to_string_any(const T& value) {
+    ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
+int main() {
+    ifstream inputFile("/app/userdata/input/input.txt");
+    string line;
+    vector<string> lines;
+    
+    while (getline(inputFile, line)) {
+        lines.push_back(line);
+    }
+
+    int testCount = stoi(lines[1]);
+    string funcName = lines[2];
+
+    vector<string> inputs;
+    vector<string> outputs;
+
+    for (int i = 3; i < lines.size(); i++) {
+        if (lines[i] == "---INPUT---") {
+            inputs.push_back(lines[++i]);
+        } else if (lines[i] == "---OUTPUT---") {
+            outputs.push_back(lines[++i]);
+        }
+    }
+
+    ofstream outputFile("output.txt");
+
+    for (int i = 0; i < testCount; i++) {
+        stringstream ss(inputs[i]);
+        string expected;
+        ss >> expected;
+
+        // Начало отсчета времени
+        auto start = high_resolution_clock::now();
+
+        // Вставка вызова функции с аргументами
+        auto result = {{FUNC_NAME}}({{ALL_ARGS_HERE}});
+
+        // Окончание отсчета времени
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);  // Время в миллисекундах
+
+        string status = (to_string_any(result) == expected) ? "PASSED" : "FAILED";
+
+        outputFile << i + 1 << " " << status << " " << duration.count() << " MEMORY:16mb" << endl;
+        cout << i + 1 << " " << status << " " << duration.count() << " MEMORY:16mb" << endl;
+    }
+
+    return 0;
+}
