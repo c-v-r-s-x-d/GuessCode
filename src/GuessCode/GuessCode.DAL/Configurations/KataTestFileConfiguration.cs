@@ -10,5 +10,10 @@ public class KataTestFileConfiguration : IEntityTypeConfiguration<KataTestFile>
     {
         builder.ToTable("KataTestFile");
         builder.HasKey(x => x.KataId);
+        builder
+            .HasOne(x => x.Kata)
+            .WithOne()
+            .HasForeignKey<KataTestFile>(x => x.KataId);
+
     }
 }

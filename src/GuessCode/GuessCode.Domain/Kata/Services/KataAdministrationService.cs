@@ -107,6 +107,7 @@ public class KataAdministrationService : IKataAdministrationService
                 KataId = kata.Id,
                 FileName = fileId.Value.ToString()
             }, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
         
         await transaction.CommitAsync(cancellationToken);

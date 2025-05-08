@@ -127,12 +127,15 @@ public class MentorshipService : IMentorshipService
             .ExecuteUpdateAsync(x =>
                 x.SetProperty(y => y.Status, newStatus), cancellationToken);
 
-        await _context
-            .Set<User>()
-            .Where(x => x.Id == menteeId)
-            .ExecuteUpdateAsync(x => 
-                x.SetProperty(y => y.MentorId, mentorId), cancellationToken);
-        
+        if (newStatus is MentorRequestStatus.Accepted)
+        {
+            await _context
+                .Set<User>()
+                .Where(x => x.Id == menteeId)
+                .ExecuteUpdateAsync(x =>
+                    x.SetProperty(y => y.MentorId, mentorId), cancellationToken);
+        }
+
         await transaction.CommitAsync(cancellationToken);
     }
 
