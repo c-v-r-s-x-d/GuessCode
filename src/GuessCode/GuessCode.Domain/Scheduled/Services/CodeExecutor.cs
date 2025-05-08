@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using GuessCode.API.Models.V1.Settings;
+using GuessCode.DAL.Contexts;
 using GuessCode.DAL.Models.Enums;
 using GuessCode.Domain.Scheduled.Models;
 using GuessCode.Domain.Utils;
@@ -12,6 +13,14 @@ namespace GuessCode.Domain.Scheduled.Services;
 public class CodeExecutor
 {
     private const string ImagePrefix = "guesscode/";
+    private const string WrapperDirectory = "/app/compilers/";
+    private const string TestFileDirectory = "/app/local/";
+    private const string TestFileExtension = ".txt";
+
+    private const string UserCodeReplaceKey = @"{{USER_CODE}}";
+    private const string FuncNameReplaceKey = @"{{FUNC_NAME}}";
+    private const string ArgsReplaceKey = @"{{ALL_ARGS_HERE}}";
+    
     private readonly CodeExecutionSettings _settings;
     private readonly Dictionary<string, Func<CodeExecutionTask, Task<string>>> _runners;
 
@@ -22,19 +31,19 @@ public class CodeExecutor
         {
             {
                 ProgrammingLanguage.Python.GetDescription(),
-                task => RunContainerAsync(_settings.PythonImage, _settings.PythonFileName, task.SourceCode, task.Input)
+                task => RunContainerAsync(_settings.PythonImage, _settings.PythonFileName, task.SourceCode, task.InputFile)
             },
             {
                 ProgrammingLanguage.Cpp.GetDescription(),
-                task => RunContainerAsync(_settings.CppImage, _settings.CppFileName, task.SourceCode, task.Input)
+                task => RunContainerAsync(_settings.CppImage, _settings.CppFileName, task.SourceCode, task.InputFile)
             },
             {
                 ProgrammingLanguage.Java.GetDescription(),
-                task => RunContainerAsync(_settings.JavaImage, _settings.JavaFileName, task.SourceCode, task.Input)
+                task => RunContainerAsync(_settings.JavaImage, _settings.JavaFileName, task.SourceCode, task.InputFile)
             },
             {
                 ProgrammingLanguage.Csharp.GetDescription(),
-                task => RunContainerAsync(_settings.CsharpImage, _settings.CsharpFileName, task.SourceCode, task.Input)
+                task => RunContainerAsync(_settings.CsharpImage, _settings.CsharpFileName, task.SourceCode, task.InputFile)
             },
         };
     }
@@ -47,8 +56,14 @@ public class CodeExecutor
         throw new ValidationException($"Unknown language: {task.Language}");
     }
 
-    private async Task<string> RunContainerAsync(string image, string fileName, string code, string input)
+    private async Task<string> RunContainerAsync(string image, string fileName, string code, Guid fileId)
     {
+        var executableFile = BuildExecutableFile(code, fileId.ToString(), image);
+        var input = GetTestFileContent(fileId.ToString());
+        
+        Console.WriteLine(executableFile);
+        Console.WriteLine(input);
+        
         image = ImagePrefix + image;
         
         var uniqueId = Guid.NewGuid().ToString("N");
@@ -68,7 +83,7 @@ public class CodeExecutor
             },
             Data = new Dictionary<string, string>
             {
-                { fileName, code },
+                { fileName, executableFile },
                 { "input.txt", input }
             }
         };
@@ -88,19 +103,19 @@ public class CodeExecutor
                 RestartPolicy = "Never",
                 Containers = new List<V1Container>
                 {
-                    new V1Container
+                    new()
                     {
                         Name = "runner",
                         Image = image,
                         VolumeMounts = new List<V1VolumeMount>
                         {
-                            new V1VolumeMount
+                            new()
                             {
                                 Name = "input-volume",
                                 MountPath = "/app/userdata/input",
                                 ReadOnlyProperty = true
                             },
-                            new V1VolumeMount
+                            new()
                             {
                                 Name = "output-volume",
                                 MountPath = "/app/userdata/output"
@@ -110,7 +125,7 @@ public class CodeExecutor
                 },
                 Volumes = new List<V1Volume>
                 {
-                    new V1Volume
+                    new()
                     {
                         Name = "input-volume",
                         ConfigMap = new V1ConfigMapVolumeSource
@@ -118,7 +133,7 @@ public class CodeExecutor
                             Name = configMap.Metadata.Name
                         }
                     },
-                    new V1Volume
+                    new()
                     {
                         Name = "output-volume",
                         EmptyDir = new V1EmptyDirVolumeSource()
@@ -148,5 +163,30 @@ public class CodeExecutor
 
         using var streamReader = new StreamReader(logs);
         return await streamReader.ReadToEndAsync();
+    }
+
+    private static string BuildExecutableFile(string userCode, string testFileId, string directory)
+    {
+        var templateFile = GetTemplateFileContent(directory);
+        var testFile = GetTestFileContent(testFileId);
+        
+        var executableFile = templateFile
+            .Replace(UserCodeReplaceKey, userCode)
+            .Replace(FuncNameReplaceKey, "Foo")
+            .Replace(ArgsReplaceKey, "args[0], args[1]");
+        
+        return executableFile;
+    }
+
+    private static string GetTemplateFileContent(string directory)
+    {
+        var path = WrapperDirectory + directory + "/wrapper.txt";
+        return System.IO.File.ReadAllText(path);
+    }
+
+    private static string GetTestFileContent(string fileName)
+    {
+        var path = TestFileDirectory + fileName + TestFileExtension;
+        return System.IO.File.ReadAllText(path);
     }
 }

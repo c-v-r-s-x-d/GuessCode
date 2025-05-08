@@ -61,6 +61,7 @@ public class ProcessNextCodeExecutionRequestCommandHandler : IRequestHandler<Pro
             });
 
             var user = await _context.Set<User>()
+                .Include(x => x.ResolvedKatas)
                 .SingleAsync(x => x.Id == currentTask.ExecutedBy, cancellationToken);
             user.ResolvedKatas.Add(kata);
         }

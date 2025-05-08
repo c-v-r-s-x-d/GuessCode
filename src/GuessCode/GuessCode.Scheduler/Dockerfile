@@ -13,6 +13,7 @@ COPY ["src/GuessCode/GuessCode.DAL/GuessCode.DAL.csproj", "GuessCode.DAL/"]
 RUN dotnet restore "GuessCode.Scheduler/GuessCode.Scheduler.csproj"
 
 COPY . .
+COPY /src/GuessCode/GuessCode.Scheduler/compilers /app/compilers
 WORKDIR "/src/GuessCode/GuessCode.Scheduler"
 
 RUN dotnet build "GuessCode.Scheduler.csproj" -c Release -o /app/build
@@ -23,4 +24,5 @@ RUN dotnet publish "GuessCode.Scheduler.csproj" -c Release -o /app/publish /p:Us
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /app/compilers ./compilers
 ENTRYPOINT ["dotnet", "GuessCode.Scheduler.dll"]

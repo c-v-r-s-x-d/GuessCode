@@ -105,7 +105,7 @@ public class KataAdministrationService : IKataAdministrationService
             await _context.AddAsync(new KataTestFile
             {
                 KataId = kata.Id,
-                FileName = fileId.Value.ToString()
+                FileId = fileId.Value
             }, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
         }

@@ -27,6 +27,13 @@ public class KataCodeExecutionService : IKataCodeExecutionService
             .Set<Kata>()
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == kataId, cancellationToken) ?? throw new ValidationException($"Kata {kataId} not found");
+
+        var fileId = await _context
+            .Set<KataTestFile>()
+            .AsNoTracking()
+            .Where(x => x.KataId == kataId)
+            .Select(x => x.FileId)
+            .SingleAsync(cancellationToken);
         
         var codeExecutionTask = new CodeExecutionTask
         {
@@ -34,7 +41,7 @@ public class KataCodeExecutionService : IKataCodeExecutionService
             ExecutedBy = userId,
             Language = kata.ProgrammingLanguage.GetDescription(),
             SourceCode = sourceCode,
-            Input = string.Empty // тут добавить поле для инпута тестов
+            InputFile = fileId
         };
 
         await _codeQueueService.EnqueueAsync(codeExecutionTask);

@@ -12,5 +12,5 @@ public class CodeExecutionTask
     
     public string SourceCode { get; set; }
     
-    public string Input { get; set; }
+    public Guid InputFile { get; set; }
 }
